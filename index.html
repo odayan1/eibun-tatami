@@ -7,13 +7,14 @@
 <title>読める英文 英検2級｜Q-UP英語塾</title>
 <style>
 :root{--main:#0e6f78;--main2:#17939e;--deep:#0a4a51;--soft:#e6f5f5;--acc:#ff6b57;--acc2:#ffe0db;--ink:#22303c;--bg:#f2f6f7;--ok:#1f9d55;--ng:#d64545;--gold:#d4a017;
-  --cn:#228be6;--cnBg:rgba(34,139,230,.14);--ca:#2b9a66;--caBg:rgba(43,154,102,.16);--cd:#9c36b5;--cdBg:rgba(156,54,181,.13)}
+  --cn:#228be6;--cnBg:rgba(34,139,230,.13);--ca:#2b9a66;--caBg:rgba(43,154,102,.15);--cd:#9c36b5;--cdBg:rgba(156,54,181,.12)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;word-break:auto-phrase;line-break:strict}
 .wrap{max-width:600px;margin:0 auto;padding:0 14px 40px}
 header{background:linear-gradient(110deg,var(--deep),var(--main) 60%,var(--main2));color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.15)}
-header img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--acc)}
-header>div{min-width:0}header .t1{font-size:11px;opacity:.85;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--acc);flex:none}
+header>div{min-width:0}
+header .t1{font-size:11px;opacity:.85;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 header .t2{font-weight:900;font-size:17px;letter-spacing:.02em}
 header .t2 span{color:var(--acc)}
 header .pt{white-space:nowrap;margin-left:auto;background:rgba(255,255,255,.16);padding:4px 11px;border-radius:99px;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums}
@@ -21,36 +22,67 @@ header .hm{white-space:nowrap;background:none;border:1.5px solid rgba(255,255,25
 .card{background:#fff;border-radius:16px;padding:18px;margin-top:14px;box-shadow:0 2px 10px rgba(20,40,70,.07)}
 h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 .muted{color:#6b7885;font-size:13px}
+.en-s{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 .hero{background:linear-gradient(135deg,var(--deep),var(--main) 55%,#138a93);color:#fff;border-radius:18px;padding:22px 18px 18px;margin-top:14px;position:relative;overflow:hidden}
 .hero:after{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;border-radius:50%;background:rgba(255,107,87,.22)}
 .hero .en{font-size:12px;font-weight:800;letter-spacing:.22em;color:#ffd1c9}
-.hero .jp{font-size:26px;font-weight:900;margin:6px 0 6px;line-height:1.35}
+.hero .jp{font-size:25px;font-weight:900;margin:6px 0 6px;line-height:1.4;position:relative;z-index:1}
 .hero .jp span{color:var(--acc)}
-.hero .sub{font-size:13px;opacity:.9;line-height:1.7}
+.hero .sub{font-size:13.5px;opacity:.93;line-height:1.75;position:relative;z-index:1}
 .hero .stat{display:inline-block;margin-top:12px;background:rgba(255,255,255,.14);border-radius:99px;padding:5px 12px;font-size:13px;font-weight:800}
 .bubble{display:flex;gap:10px;align-items:flex-start;margin-top:14px}
 .bubble img{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.12)}
 .bubble div{background:#fff;border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:14px;line-height:1.7;box-shadow:0 2px 8px rgba(20,40,70,.07)}
-.rule{display:grid;grid-template-columns:44px 1fr;gap:8px 8px;font-size:14px;align-items:center}
+/* guide */
+.gdots{display:flex;gap:6px;justify-content:center;margin-top:14px}.gdots i{width:28px;height:5px;border-radius:9px;background:#d5dde3}.gdots i.on{background:var(--acc)}
+.skip{display:block;margin:10px 0 0 auto;background:none;border:0;color:var(--main);font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
+.pos{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:start;padding:11px 0;border-top:1px solid #edf0f3}
+.pos:first-of-type{border-top:0}
+.pos .tag{font-size:13px;font-weight:900;text-align:center;border-radius:10px;padding:7px 0;color:#fff}
+.pos .d{font-size:14px;line-height:1.65}
+.pos .ex{font-size:14px;color:#4a5866;margin-top:3px}
+.t-v{background:var(--acc)}.t-n{background:var(--cn)}.t-a{background:var(--ca)}.t-d{background:var(--cd)}
+.demo{background:var(--soft);border-radius:12px;padding:12px;margin-top:10px;font-size:17px;line-height:2.1;text-align:center}
+.demo .lbl{display:block;font-size:11px;font-weight:900;letter-spacing:.1em;color:#6b7885;line-height:1.3}
+.w{display:inline-block;margin:0 3px;text-align:center;vertical-align:top;line-height:1.4}
+.w small{display:block;font-size:10px;font-weight:900;letter-spacing:.04em}
+.arrow{font-size:18px;color:var(--acc);font-weight:900;line-height:1.4;margin:2px 0}
+.cn{color:var(--cn);font-weight:800}.ca{color:var(--ca);font-weight:800}.cd{color:var(--cd);font-weight:800}
+.bn{background:var(--cnBg);border-radius:6px;padding:0 4px}.ba{background:var(--caBg);border-radius:6px;padding:0 4px}.bd{background:var(--cdBg);border-radius:6px;padding:0 4px}
+.chunkrow{border-radius:12px;padding:12px;margin-top:10px;border:2px solid}
+.chunkrow.n{border-color:var(--cn);background:var(--cnBg)}.chunkrow.a{border-color:var(--ca);background:var(--caBg)}.chunkrow.d{border-color:var(--cd);background:var(--cdBg)}
+.chunkrow .hd{font-size:15px;font-weight:900}
+.chunkrow .ds{font-size:13.5px;line-height:1.65;margin-top:3px}
+.chunkrow .eg{font-size:15px;margin-top:6px;line-height:1.7}
+.step4{display:grid;grid-template-columns:54px 1fr;gap:10px;padding:11px 0;border-top:1px solid #edf0f3}
+.step4:first-of-type{border-top:0}
+.step4 .no{font-size:11px;font-weight:900;color:#fff;background:var(--main);border-radius:10px;text-align:center;padding:7px 2px;letter-spacing:.06em;line-height:1.3;height:fit-content}
+.step4 .no b{display:block;font-size:18px}
+.step4 .tt{font-weight:900;font-size:15px;color:var(--main)}
+.step4 .tx{font-size:13.5px;line-height:1.7;margin-top:2px}
+.why{background:var(--acc2);border-radius:10px;padding:9px 11px;margin-top:6px;font-size:13.5px;line-height:1.7}
+.why b.h{color:var(--acc);letter-spacing:.08em}
+.lvline{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;flex-wrap:wrap}
+.lvline span{font-size:11px;font-weight:900;letter-spacing:.1em;color:#fff;border-radius:6px;padding:4px 8px}
+/* home */
+.rule{display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:14px;align-items:center}
 .rule .k{font-size:20px;font-weight:900;text-align:center;border-radius:10px;padding:2px 0}
 .kn{color:var(--cn);background:var(--cnBg)}.ka{color:var(--ca);background:var(--caBg)}.kd{color:var(--cd);background:var(--cdBg)}
-.flow{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
-.flow span{font-size:12px;font-weight:800;background:var(--soft);color:var(--main);border-radius:99px;padding:4px 10px}
 .series{border-radius:14px;padding:14px;margin-top:12px;background:#fff;box-shadow:0 2px 10px rgba(20,40,70,.07);border-left:6px solid var(--main)}
 .series .no{font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--acc)}
 .series .nm{font-size:16px;font-weight:900;color:var(--main);margin:2px 0}
 .series .fc{font-size:13px;color:#6b7885;font-family:system-ui,sans-serif}
-.lvs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.lv{border:2px solid #dde3ea;background:#fff;border-radius:12px;padding:9px 4px;cursor:pointer;text-align:center;font-family:inherit;color:var(--ink)}
-.lv b{display:block;font-size:13px;letter-spacing:.08em;color:var(--main)}
-.lv small{display:block;font-size:11px;color:#6b7885;margin-top:1px}
+.lvs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.lv{border:2px solid #dde3ea;background:#fff;border-radius:12px;padding:8px 2px;cursor:pointer;text-align:center;font-family:inherit;color:var(--ink)}
+.lv b{display:block;font-size:11.5px;letter-spacing:.04em;color:var(--main)}
+.lv small{display:block;font-size:10.5px;color:#6b7885;margin-top:1px}
 .lv .rk{display:inline-block;margin-top:4px;font-size:12px;font-weight:900;border-radius:6px;padding:0 7px;color:#fff;background:#c3ccd5}
 .rk.S{background:linear-gradient(135deg,#d4a017,#f5c542)}.rk.A{background:var(--acc)}.rk.B{background:var(--main2)}
 .lv:active{transform:scale(.97)}
 /* play */
 .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .badge{font-size:12px;font-weight:900;letter-spacing:.14em;color:#fff;background:var(--acc);border-radius:6px;padding:3px 9px}
-.badge.BASIC{background:var(--main2)}.badge.MEDIUM{background:var(--main)}.badge.ADVANCED{background:linear-gradient(135deg,var(--deep),#3b2a7a)}
+.CORE{background:#5c6f7e}.BASIC{background:var(--main2)}.MEDIUM{background:var(--main)}.ADVANCED{background:linear-gradient(135deg,var(--deep),#3b2a7a)}
 .wc{font-size:13px;font-weight:800;color:#6b7885}
 .sname{font-size:12px;color:#6b7885;margin-left:auto}
 .prog{display:flex;gap:4px;margin-top:10px}.prog i{flex:1;height:6px;border-radius:9px;background:#dfe5ec}.prog i.d{background:var(--main2)}.prog i.c{background:var(--acc)}
@@ -59,6 +91,7 @@ h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 .steps div small{display:block;font-size:10px;font-weight:600;letter-spacing:0}
 .steps div.on{background:var(--main);color:#fff}
 .steps div.ok{background:var(--soft);color:var(--main)}
+.steps div.na{opacity:.35}
 .inst{font-size:15px;font-weight:800;color:var(--main);margin:2px 0 4px;line-height:1.5}
 .inst .rem{background:var(--acc);color:#fff;border-radius:99px;padding:1px 9px;font-size:12px;margin-left:4px}
 .sentence{font-size:20px;line-height:2.45;padding:10px 2px 4px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -71,7 +104,7 @@ h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 .tok.flash{animation:flash 1s ease 2}@keyframes flash{50%{background:#ffe066}}
 .seg{transition:opacity .55s,filter .55s}
 .seg.f-n{background:var(--cnBg);border-radius:7px}.seg.f-a{background:var(--caBg);border-radius:7px}.seg.f-d{background:var(--cdBg);border-radius:7px}
-.br{font-weight:900;font-size:24px;padding:0 1px}
+.br{font-weight:900;font-size:22px;padding:0 1px}
 .br.n{color:var(--cn)}.br.a{color:var(--ca)}.br.d{color:var(--cd)}
 .seg.fading{opacity:0;filter:blur(3px)}
 .chipA{display:inline-block;background:var(--cn);color:#fff;border-radius:8px;padding:0 12px;font-weight:900;animation:pop .35s}
@@ -81,25 +114,37 @@ h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 .tb-n{border:2px solid var(--cn);color:var(--cn)}.tb-a{border:2px solid var(--ca);color:var(--ca)}.tb-d{border:2px solid var(--cd);color:var(--cd)}
 .tools{display:flex;gap:8px;margin-top:12px}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;letter-spacing:.04em}
-.btn.main{background:var(--acc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.btn.main{background:var(--acc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15);margin-top:14px}
 .btn.main:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.15)}
-.btn.sub{background:var(--soft);color:var(--main)}
+.btn.sub{background:var(--soft);color:var(--main);margin-top:10px}
+.tools .btn.sub{margin-top:0}
 .btn.fold{background:linear-gradient(135deg,var(--deep),var(--main2));color:#fff;font-size:20px;letter-spacing:.2em;box-shadow:0 5px 0 rgba(0,0,0,.2);animation:pulse 1.2s infinite}
 @keyframes pulse{50%{transform:scale(1.03)}}
 .fb{border-radius:12px;padding:11px 13px;margin-top:12px;font-size:14px;line-height:1.7;display:none}
 .fb.ok{background:#e7f6ee;display:block}.fb.ng{background:#fdecec;display:block}.fb.info{background:var(--soft);display:block}
 .fb .h{font-weight:900;letter-spacing:.08em;margin-right:6px}
 .fb.ok .h{color:var(--ok)}.fb.ng .h{color:var(--ng)}.fb.info .h{color:var(--main)}
-.found{margin-top:10px;font-size:13px;line-height:1.6;font-family:system-ui,sans-serif}
-.found div{padding:4px 0;border-top:1px dashed #e3e8ec}
-.found b.n{color:var(--cn)}.found b.a{color:var(--ca)}.found b.d{color:var(--cd)}
-.found span{font-family:"Hiragino Sans","Noto Sans JP",sans-serif;color:#6b7885}
+/* parts (カタマリ一覧) */
+.parts{margin-top:10px;display:grid;gap:8px}
+.part{border-radius:12px;padding:10px 12px;border-left:6px solid;background:#fff;box-shadow:0 1px 6px rgba(20,40,70,.08);animation:pop .35s}
+.part.n{border-color:var(--cn);background:linear-gradient(90deg,var(--cnBg),#fff 70%)}
+.part.a{border-color:var(--ca);background:linear-gradient(90deg,var(--caBg),#fff 70%)}
+.part.d{border-color:var(--cd);background:linear-gradient(90deg,var(--cdBg),#fff 70%)}
+.part .lab{display:inline-block;font-size:11.5px;font-weight:900;color:#fff;border-radius:6px;padding:2px 8px;letter-spacing:.04em}
+.part.n .lab{background:var(--cn)}.part.a .lab{background:var(--ca)}.part.d .lab{background:var(--cd)}
+.part .en{font-size:16.5px;font-weight:800;margin-top:5px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+.part.n .en b{color:var(--cn)}.part.a .en b{color:var(--ca)}.part.d .en b{color:var(--cd)}
+.part .jp{font-size:15px;font-weight:900;margin-top:3px}
+.part .rl{font-size:12.5px;color:#4a5866;margin-top:2px}
 .skel{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin:10px 0 4px}
 .skel .p{text-align:center;animation:pop .4s both}
-.skel .w{font-size:22px;font-weight:900;padding:4px 12px;border-radius:10px;background:var(--soft);color:var(--main);font-family:system-ui,sans-serif}
-.skel .w.v{background:var(--acc2);color:var(--acc)}
+.skel .w2{font-size:22px;font-weight:900;padding:4px 12px;border-radius:10px;background:var(--soft);color:var(--main);font-family:system-ui,sans-serif}
+.skel .w2.v{background:var(--acc2);color:var(--acc)}
+.skel .w2.A{background:var(--cn);color:#fff}
 .skel .r{font-size:11px;font-weight:900;color:#98a4ae;margin-top:3px;letter-spacing:.1em}
-.shrink{font-size:14px;font-weight:800;color:var(--main);margin-top:6px}
+.amean{background:var(--cnBg);border:2px solid var(--cn);border-radius:12px;padding:9px 12px;margin-top:8px;font-size:14px;line-height:1.65}
+.amean b{color:var(--cn)}
+.shrink{font-size:14px;font-weight:800;color:var(--main);margin-top:8px}
 .shrink b{font-size:22px;color:var(--acc);font-variant-numeric:tabular-nums}
 .choices{display:grid;gap:9px;margin-top:10px}
 .choices button{border:2px solid #dde3ea;background:#fff;border-radius:12px;padding:12px 13px;font-size:15px;font-weight:700;text-align:left;cursor:pointer;font-family:inherit;color:var(--ink);line-height:1.55}
@@ -107,8 +152,8 @@ h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 .choices button.ng{border-color:var(--ng);background:#fdecec}
 .choices button:disabled{cursor:default;color:var(--ink)}
 .notes{margin:6px 0 0;padding-left:18px}.notes li{margin:5px 0;line-height:1.7;font-size:14px}
-.sec{font-size:12px;font-weight:900;letter-spacing:.16em;color:var(--acc);margin-top:16px}
-.toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);font-size:34px;font-weight:900;letter-spacing:.06em;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18);pointer-events:none;z-index:30;opacity:0;white-space:nowrap}
+.sec{font-size:12px;font-weight:900;letter-spacing:.16em;color:var(--acc);margin-top:18px}
+.toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);font-size:34px;font-weight:900;letter-spacing:.06em;pointer-events:none;z-index:30;opacity:0;white-space:nowrap;text-shadow:0 3px 0 rgba(0,0,0,.12)}
 .toast.go{animation:toast .9s ease-out}
 .toast small{display:block;font-size:15px;text-align:center;letter-spacing:.12em}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,-30%) scale(.7)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-80%) scale(1)}}
@@ -120,7 +165,7 @@ h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 footer{font-size:11px;color:#8a949e;line-height:1.6;margin-top:24px;text-align:center}
 #cf{position:fixed;inset:0;pointer-events:none;z-index:20}
 .hide{display:none!important}
-.pop{animation:pop .35s}@keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+.pop{animation:pop .35s}@keyframes pop{0%{transform:scale(.95);opacity:0}100%{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
@@ -134,69 +179,82 @@ const store = (() => { try { const k = "__t"; localStorage.setItem(k, "1"); loca
 const ELLIE = "data:image/jpeg;base64,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";
 
 /* ===================== データ ===================== */
-/* t: n=名詞 a=形容詞 d=副詞 ／ s,e = トークン番号（句読点も1トークン） */
+/* t: n=名詞 a=形容詞 d=副詞 ／ s,e = トークン番号（句読点も1トークン） ／ stage 0=CORE（骨格のみ） */
 const SERIES = [
-  { name:"名詞のカタマリ", focus:"what is now a museum" },
-  { name:"関係代名詞の省略", focus:"The money she saved …" },
-  { name:"分詞のカタマリ", focus:"Growing up … ／ temples built …" }
+  { name:"名詞のカタマリ", focus:"the museum → what is now a museum" },
+  { name:"形容詞のカタマリ（関係代名詞の省略）", focus:"The money (she saved) …" },
+  { name:"副詞のカタマリ（分詞構文）", focus:"<Growing up in Kyoto>, he …" }
 ];
-const LV = ["BASIC","MEDIUM","ADVANCED"];
+const LV = ["CORE","BASIC","MEDIUM","ADVANCED"];
+const LVCOL = ["#5c6f7e","#17939e","#0e6f78","#3b2a7a"];
 const P = [
- { series:0, stage:0, text:"Many tourists visit what is now a museum .", verb:2,
-   chunks:[{s:3,e:7,t:"n",ja:"現在は博物館になっている場所",why:"visit の目的語（O）として機能"}],
-   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（現在は博物館になっている場所）",
-   choices:["多くの観光客が、現在は博物館になっている場所を訪れる。","多くの観光客が、今の博物館が何であるかを訪ねる。","多くの観光客が、今すぐ博物館を訪れる。","今では多くの観光客が博物館になっている。"],
-   notes:["<b>what is now ～</b>＝「現在〜となっているもの／場所」。what は先行詞を含む関係代名詞（＝the place which）。","疑問詞の「何」と解釈すると文意が崩壊する。visit の直後にあるため、全体が目的語（O）として機能する<b>名詞節</b>。","is は名詞節の内部の動詞。文の V は visit。","頻出形：He was born in what is now Germany.（現在のドイツにあたる地域に生まれた）"] },
- { series:0, stage:1, text:"Many tourists from abroad visit what is now a museum .", verb:4,
-   chunks:[{s:2,e:3,t:"a",ja:"海外からの",why:"直前の名詞 tourists を修飾"},{s:5,e:9,t:"n",ja:"現在は博物館になっている場所",why:"visit の目的語（O）として機能"}],
-   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（現在は博物館になっている場所）",
-   choices:["海外からの多くの観光客が、現在は博物館になっている場所を訪れる。","多くの観光客が、海外にある博物館を訪れる。","海外の多くの博物館を、観光客が訪れる。","多くの観光客が、今の海外の博物館が何かを訪ねる。"],
-   notes:["(from abroad) は直前の名詞 tourists を後ろから修飾 →「海外からの観光客」。","名詞の直後の前置詞句は、まず<b>形容詞的用法（名詞の修飾）</b>を疑うのがセオリー。","骨格は BASIC と完全に同一：Many tourists visit [A]."] },
- { series:0, stage:2, text:"Every summer , many tourists from abroad visit what is now a museum to learn about the history of the town .", verb:7,
-   chunks:[{s:0,e:1,t:"d",ja:"毎年夏に",why:"visit の「時」を表す"},{s:5,e:6,t:"a",ja:"海外からの",why:"直前の名詞 tourists を修飾"},{s:8,e:12,t:"n",ja:"現在は博物館になっている場所",why:"visit の目的語（O）として機能"},{s:13,e:20,t:"d",ja:"町の歴史を学ぶために",why:"visit の目的（〜するために）を表す"}],
-   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（現在は博物館になっている場所）",
-   choices:["毎年夏、海外からの多くの観光客が、町の歴史を学ぶために、現在は博物館になっている場所を訪れる。","毎年夏、町の歴史を学べる海外の博物館を、多くの観光客が訪れる。","毎年夏、多くの観光客が海外を訪れ、今は博物館で町の歴史を学んでいる。","毎年夏、海外の多くの観光客は、町の歴史を学ぶことが今の博物館だと知る。"],
-   notes:["<Every summer> は「時」を表す副詞句。","<to learn about … town> は<b>目的を表す不定詞（副詞的用法）</b>。内部の (of the town) はこの句の中の修飾なので、外側の1ブロックとして処理すればよい。","20語でも骨格は BASIC と同じ。長さの正体は、修飾の量にすぎない。"] },
+ /* ---------- SERIES 01 ---------- */
+ { series:0, stage:0, text:"Many tourists visit the museum .", verb:2, chunks:[],
+   skel:[["Many tourists","S"],["visit","V"],["the museum","O"]],
+   notes:["これが骨格：<b>S（主語）＋ V（動詞）＋ O（目的語）</b>。ここから文がどんどん長くなる。","the museum は名詞（目的語）。次の BASIC では、この<b>名詞の位置に「名詞のカタマリ」</b>が入る。"] },
+ { series:0, stage:1, text:"Many tourists visit what is now a museum .", verb:2,
+   chunks:[{s:3,e:7,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"<b>A ＝ what is now a museum</b>（今は博物館になっている場所）<br>CORE の <b>the museum</b> と同じ位置＝名詞の位置に入っている。",
+   choices:["多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、今の博物館が何であるかを訪ねる。","多くの観光客が、今すぐ博物館を訪れる。","今では多くの観光客が博物館になっている。"],
+   notes:["CORE の the museum（名詞）の位置に、<b>[what is now a museum]</b> が入った。名詞と同じ位置に入るので<b>名詞のカタマリ</b>。","<b>what is now ～</b>＝「今は〜になっているもの・場所」。what is now a museum ＝「今は博物館になっている場所」（もとは城や駅だった、などの含み）。","what を疑問詞の「何」と読むと文意が崩壊する。is はカタマリの中の動詞で、文の V は visit。","頻出形：He was born in what is now Germany.（今のドイツにあたる地域に生まれた）"] },
+ { series:0, stage:2, text:"Many tourists from abroad visit what is now a museum .", verb:4,
+   chunks:[{s:2,e:3,t:"a",ja:"海外からの",why:"直前の名詞 tourists を修飾"},{s:5,e:9,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"<b>A ＝ what is now a museum</b>（今は博物館になっている場所）",
+   choices:["海外からの多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、海外にある博物館を訪れる。","海外の多くの博物館を、観光客が訪れる。","多くの観光客が、今の海外の博物館が何かを訪ねる。"],
+   notes:["(from abroad) は直前の名詞 tourists を後ろから修飾する<b>形容詞のカタマリ</b> →「海外からの観光客」。","名詞の直後の前置詞のカタマリは、まず<b>直前の名詞の修飾</b>を疑うのがセオリー。","骨格は CORE と同じ：Many tourists visit [A]."] },
+ { series:0, stage:3, text:"Every summer , many tourists from abroad visit what is now a museum to learn about the history of the town .", verb:7,
+   chunks:[{s:0,e:1,t:"d",ja:"毎年夏に",why:"visit の「時」を表す"},{s:5,e:6,t:"a",ja:"海外からの",why:"直前の名詞 tourists を修飾"},{s:8,e:12,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）"},{s:13,e:20,t:"d",ja:"町の歴史を学ぶために",why:"visit の目的（〜するために）を表す"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"<b>A ＝ what is now a museum</b>（今は博物館になっている場所）",
+   choices:["毎年夏、海外からの多くの観光客が、町の歴史を学ぶために、今は博物館になっている場所を訪れる。","毎年夏、町の歴史を学べる海外の博物館を、多くの観光客が訪れる。","毎年夏、多くの観光客が海外を訪れ、今は博物館で町の歴史を学んでいる。","毎年夏、海外の多くの観光客は、町の歴史を学ぶことが今の博物館だと知る。"],
+   notes:["<Every summer> は「時」を表す<b>副詞のカタマリ</b>。","<to learn about … town> は目的（〜するために）を表す<b>副詞のカタマリ</b>（不定詞）。内部の of the town はこのカタマリの中の修飾なので、外側の1つとして括ればよい。","20語でも、骨格は CORE とまったく同じ。長さの正体は、カタマリの量にすぎない。"] },
 
- { series:1, stage:0, text:"The money she saved helped her family .", verb:4,
+ /* ---------- SERIES 02 ---------- */
+ { series:1, stage:0, text:"The money helped her family .", verb:2, chunks:[],
+   skel:[["The money","S"],["helped","V"],["her family","O"]],
+   notes:["骨格：<b>S ＋ V ＋ O</b>。「そのお金が家族を助けた」。","次の BASIC では、名詞 money の直後に、money を説明する<b>形容詞のカタマリ</b>が付く。"] },
+ { series:1, stage:1, text:"The money she saved helped her family .", verb:4,
    chunks:[{s:2,e:3,t:"a",ja:"彼女が貯めた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"}],
-   skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
+   skel:[["The money","S"],["helped","V"],["her family","O"]],
    choices:["彼女が貯めたお金が、家族を助けた。","そのお金が彼女を救い、家族を助けた。","彼女はお金を貯めて、家族を助けた。","彼女の家族が貯めたお金が、役に立った。"],
-   notes:["The money (she saved) は、目的格の関係代名詞 that が<b>省略</b>された形。","<b>名詞＋S＋V</b>（money she saved）の並びは、関係代名詞省略のサイン。","saved は関係詞節の内部の動詞。文の V は helped。saved を「救った」と読んだ時点で構造を見失う。"] },
- { series:1, stage:1, text:"The money she saved from her part-time job helped her family of five .", verb:8,
+   notes:["(she saved) は money を後ろから修飾する<b>形容詞のカタマリ</b>。目的格の関係代名詞 that が省略されている。","<b>名詞＋S＋V</b>（money she saved）の並びは、関係代名詞省略のサイン。","saved はカタマリの中の動詞。文の V は helped。saved を「救った」と読んだ時点で構造を見失う。"] },
+ { series:1, stage:2, text:"The money she saved from her part-time job helped her family of five .", verb:8,
    chunks:[{s:2,e:7,t:"a",ja:"彼女がアルバイトで貯めた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"},{s:11,e:12,t:"a",ja:"5人の",why:"直前の名詞 family を修飾"}],
-   skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
+   skel:[["The money","S"],["helped","V"],["her family","O"]],
    choices:["彼女がアルバイトで貯めたお金が、5人家族を助けた。","5人家族がアルバイトで貯めたお金が、彼女を助けた。","そのお金は彼女をアルバイトから救い、5人家族を助けた。","彼女が貯めたお金で、5人がアルバイトを手伝った。"],
-   notes:["関係詞節 (she saved from her part-time job) は money を修飾し、job まで続く。<b>境界は次の動詞 helped の直前</b>。","(of five) は family を修飾 →「5人家族」。","骨格は BASIC と同一：The money helped her family."] },
- { series:1, stage:2, text:"After her father lost his job , the money she had saved from her part-time job helped her family of five for almost a year .", verb:16,
-   chunks:[{s:0,e:5,t:"d",ja:"父親が職を失った後",why:"主節全体の「時」を表す"},{s:9,e:15,t:"a",ja:"彼女がアルバイトで貯めていた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"},{s:19,e:20,t:"a",ja:"5人の",why:"直前の名詞 family を修飾"},{s:21,e:24,t:"d",ja:"ほぼ1年間",why:"helped の期間を表す"}],
-   skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
+   notes:["(she saved from her part-time job) は money を修飾し、job まで続く。<b>カタマリの終点は、次の動詞 helped の直前</b>。","(of five) は family を修飾 →「5人家族」。","骨格は CORE と同じ：The money helped her family."] },
+ { series:1, stage:3, text:"After her father lost his job , the money she had saved from her part-time job helped her family of five for almost a year .", verb:16,
+   chunks:[{s:0,e:5,t:"d",ja:"父親が職を失った後",why:"文全体の「時」を表す"},{s:9,e:15,t:"a",ja:"彼女がアルバイトで貯めていた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"},{s:19,e:20,t:"a",ja:"5人の",why:"直前の名詞 family を修飾"},{s:21,e:24,t:"d",ja:"ほぼ1年間",why:"helped の期間を表す"}],
+   skel:[["The money","S"],["helped","V"],["her family","O"]],
    choices:["父親が職を失った後、彼女がアルバイトで貯めていたお金が、5人家族をほぼ1年間支えた。","父親が職を失った後、彼女はアルバイトで貯めたお金を1年で使い切った。","彼女の父親は、彼女がアルバイトで貯めたお金のせいで、ほぼ1年間職を失った。","ほぼ1年間アルバイトをした彼女は、父親の仕事を見つけて5人家族を助けた。"],
-   notes:["<After her father lost his job> は「時」を表す<b>副詞節</b>（接続詞 after ＋ S V）。","動詞は lost / had saved / helped の3つ。修飾部の外にあるのは helped のみ → これが主節の V。","had saved（過去完了）は、helped より<b>前の時点から</b>貯めていたことを示す。時制は出来事の順序を示すシグナル。","24語が、たたむと5語の骨格に収束する。"] },
+   notes:["<After her father lost his job> は「時」を表す<b>副詞のカタマリ</b>（接続詞 after ＋ S V）。","動詞は lost / had saved / helped の3つ。カタマリの外にあるのは helped のみ → これが文の V。","had saved（過去完了）は、helped より<b>前の時点から</b>貯めていたことを示す。時制は出来事の順序を示すシグナル。","24語が、たたむと CORE と同じ5語の骨格に戻る。"] },
 
- { series:2, stage:0, text:"Growing up in Kyoto , he loved old temples .", verb:6,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"主節全体を修飾（分詞構文）"}],
-   skel:[["He","S"],["loved","V"],["old temples","O"]], A:"",
+ /* ---------- SERIES 03 ---------- */
+ { series:2, stage:0, text:"He loved old temples .", verb:1, chunks:[],
+   skel:[["He","S"],["loved","V"],["old temples","O"]],
+   notes:["骨格：<b>S ＋ V ＋ O</b>。old は temples を修飾する1語の形容詞。","次の BASIC では、文の頭に、文全体を修飾する<b>副詞のカタマリ</b>が付く。"] },
+ { series:2, stage:1, text:"Growing up in Kyoto , he loved old temples .", verb:6,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"}],
+   skel:[["He","S"],["loved","V"],["old temples","O"]],
    choices:["京都で育ったので、彼は古い寺が大好きだった。","京都が大きくなるにつれて、彼は古い寺を愛した。","彼は京都で古い寺を育てるのが好きだった。","京都で育った古い寺を、彼は愛した。"],
-   notes:["Growing up in Kyoto は<b>分詞構文</b>。意味上の主語は、主節の主語 he と一致する。","「〜する中で／〜なので」と、主節全体を修飾する副詞句。"] },
- { series:2, stage:1, text:"Growing up in Kyoto , he loved old temples built hundreds of years ago .", verb:6,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"主節全体を修飾（分詞構文）"},{s:9,e:13,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"}],
-   skel:[["He","S"],["loved","V"],["old temples","O"]], A:"",
+   notes:["<Growing up in Kyoto> は文全体を修飾する<b>副詞のカタマリ</b>（分詞構文）。","意味上の主語は、文の主語 he と一致する（育ったのは彼）。","「〜する中で／〜なので」と読む。"] },
+ { series:2, stage:2, text:"Growing up in Kyoto , he loved old temples built hundreds of years ago .", verb:6,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"},{s:9,e:13,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"}],
+   skel:[["He","S"],["loved","V"],["old temples","O"]],
    choices:["京都で育った彼は、数百年前に建てられた古い寺が大好きだった。","京都で育った彼は、数百年前に古い寺を建てるのが好きだった。","京都で育った彼は古い寺が好きで、数百年前にそれを建てた。","数百年前に京都で育った彼は、古い寺を愛した。"],
-   notes:["built は過去形ではなく<b>過去分詞</b>。(built hundreds of years ago) が temples を後ろから修飾 →「数百年前に建てられた寺」。","<b>名詞＋過去分詞</b>は、まず「〜された名詞」と読む。built を V と取ると「寺が建てた」という破綻した文になる。"] },
- { series:2, stage:2, text:"Growing up in Kyoto , the boy who later became a famous architect loved old temples built hundreds of years ago because each one had its own story .", verb:13,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"主節全体を修飾（分詞構文）"},{s:7,e:12,t:"a",ja:"後に有名な建築家となった",why:"直前の名詞 boy を修飾"},{s:16,e:20,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"},{s:21,e:27,t:"d",ja:"一つ一つに固有の物語があったので",why:"loved の理由を表す"}],
-   skel:[["The boy","S"],["loved","V"],["old temples","O"]], A:"",
+   notes:["built は過去形ではなく<b>過去分詞</b>。(built hundreds of years ago) は temples を後ろから修飾する<b>形容詞のカタマリ</b> →「数百年前に建てられた寺」。","<b>名詞＋過去分詞</b>は、まず「〜された名詞」と読む。built を V と取ると「寺が建てた」という破綻した文になる。"] },
+ { series:2, stage:3, text:"Growing up in Kyoto , the boy who later became a famous architect loved old temples built hundreds of years ago because each one had its own story .", verb:13,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"},{s:7,e:12,t:"a",ja:"後に有名な建築家となった",why:"直前の名詞 boy を修飾"},{s:16,e:20,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"},{s:21,e:27,t:"d",ja:"一つ一つに固有の物語があったので",why:"loved の理由を表す"}],
+   skel:[["The boy","S"],["loved","V"],["old temples","O"]],
    choices:["京都で育ち、後に有名な建築家となったその少年は、一つ一つに固有の物語があるという理由で、数百年前に建てられた古い寺を愛した。","京都で育ったその少年は、有名な建築家が数百年前に建てた古い寺が好きだった。","その少年は、古い寺に物語があったので、後に京都で有名な建築家になった。","京都で育った有名な建築家は、その少年に古い寺の物語を話した。"],
-   notes:["関係詞節 (who later became a famous architect) が boy を修飾。<b>主語 the boy と動詞 loved の間に割り込む</b>構造に注意。","動詞の候補は became / loved / built / had の4つ。修飾部の外にあるのは loved のみ。","<because each one had its own story> は理由を表す副詞節。","27語が5語の骨格に。ここまで読めれば、英検2級の長文の1文は怖くない。"] }
+   notes:["(who later became a famous architect) は boy を修飾する<b>形容詞のカタマリ</b>（関係代名詞）。<b>主語 the boy と動詞 loved の間に割り込む</b>構造に注意。","動詞の候補は became / loved / built / had の4つ。カタマリの外にあるのは loved のみ。","<because each one had its own story> は理由を表す<b>副詞のカタマリ</b>。","27語が、たたむと CORE と同じ骨格に。ここまで読めれば、英検2級の長文の1文は怖くない。"] }
 ];
 P.forEach(p => { p.tokens = p.text.split(" "); p.words = p.tokens.filter(t => !/^[.,]$/.test(t)).length; });
 
 /* ===================== 状態 ===================== */
-const KEY = "qupRead1_v1";
+const KEY = "qupRead1_v2";
 let save; try { save = JSON.parse(store.getItem(KEY) || "null") || {}; } catch (e) { save = {}; }
 save.rank = save.rank || {}; save.best = save.best || 0; save.pts = save.pts || 0;
-const S = { pi:0, phase:"verb", miss:0, found:new Set(), selS:null, selE:null, hint:0, combo:0, run:[], runPts:0 };
+const S = { pi:0, phase:"verb", miss:0, found:new Set(), selS:null, selE:null, hint:0, combo:0, run:[], runPts:0, inRun:false };
 const $ = s => document.querySelector(s);
 const app = $("#app");
 const symO = {n:"[",a:"(",d:"<"}, symC = {n:"]",a:")",d:">"}, tName = {n:"名詞",a:"形容詞",d:"副詞"};
@@ -212,32 +270,94 @@ function setPts(){ $("#pt").textContent = (S.inRun ? S.runPts : save.pts) + " pt
 function addPts(n){ S.runPts += n; setPts(); }
 function bubble(t){ return `<div class="bubble"><img src="${ELLIE}" alt=""><div>${t}</div></div>`; }
 function toast(big, small, color){
-  const t = $("#toast"); t.innerHTML = `${big}${small ? `<small>${small}</small>` : ""}`; t.style.color = color || "#fff";
-  t.style.textShadow = color ? "0 3px 0 rgba(0,0,0,.12)" : "0 3px 0 rgba(0,0,0,.25)";
+  const t = $("#toast"); t.innerHTML = `${big}${small ? `<small>${small}</small>` : ""}`; t.style.color = color || "#ff6b57";
   t.classList.remove("go"); void t.offsetWidth; t.classList.add("go");
 }
 function hit(base){
   S.combo++; const bonus = S.combo >= 2 ? (S.combo - 1) * 5 : 0; addPts(base + bonus);
-  const words = ["NICE!","GREAT!","EXCELLENT!","AMAZING!"];
-  toast(S.combo >= 2 ? `COMBO ×${S.combo}` : words[0], `+${base + bonus} pt`, "#ff6b57");
+  toast(S.combo >= 2 ? `COMBO ×${S.combo}` : "NICE!", `+${base + bonus} pt`);
 }
 function miss(){ S.combo = 0; S.miss++; }
 
-/* ===================== ホーム ===================== */
+/* ===================== はじめに（ガイド） ===================== */
+const GUIDE = [
+ () => `<div class="hero">
+    <div class="en">WHAT IS GRAMMAR?</div>
+    <div class="jp">文法とは、<span>品詞</span>を<br>見抜くこと。</div>
+    <div class="sub">単語1つ1つの品詞を確認するだけでは、長い英文は読めない。英文は、単語がまとまった<b>“カタマリ”</b>でできている。そして──<b>カタマリにも品詞がある</b>。</div>
+  </div>
+  <div class="card">
+    <h2>単語の品詞だけを見ると…</h2>
+    <div class="demo en-s">
+      <span class="w">Many<small style="color:var(--ca)">形</small></span><span class="w">tourists<small style="color:var(--cn)">名</small></span><span class="w"><span style="color:var(--acc);font-weight:900">visit</span><small style="color:var(--acc)">動</small></span><span class="w">the museum<small style="color:var(--cn)">名</small></span>.
+      <div class="arrow">▼ museum の位置に、カタマリが入ると</div>
+      Many tourists <span style="color:var(--acc);font-weight:900">visit</span> <span class="bn"><span class="cn">[</span>what is now a museum<span class="cn">]</span></span>.
+      <span class="lbl" style="color:var(--cn)">4語まとめて「名詞のカタマリ」＝今は博物館になっている場所</span>
+    </div>
+    <p style="font-size:14px;line-height:1.75;margin:12px 0 0">what・is・now・a・museum を1語ずつ見ても意味はつかめない。<b>4語で1つの名詞</b>として働いている、と見抜けた瞬間に文が読める。<br>長文読解の文法とは、<b>カタマリの品詞を判別する技術</b>のこと。</p>
+  </div>
+  ${bubble("Hi! エリーです。英検2級の長文で1文が長く感じるのは、カタマリがいくつもくっついているから。まずは品詞のおさらいから始めましょう！")}`,
+
+ () => `<div class="card">
+    <div class="sec" style="margin-top:0">REVIEW</div>
+    <h2 style="font-size:19px;margin-top:4px">品詞をおさらい</h2>
+    <div class="pos"><div class="tag t-v">動詞<br>V</div><div><div class="d">動作・状態を表す。<b>文の中心</b>。1つの文に、文全体の動詞（V）は基本1つ。</div><div class="ex en-s">visit / helped / loved</div></div></div>
+    <div class="pos"><div class="tag t-n">名詞</div><div><div class="d">人・もの・ことの名前。<b>主語（S）・目的語（O）・補語（C）</b>になる。</div><div class="ex en-s">tourists / the museum / money</div></div></div>
+    <div class="pos"><div class="tag t-a">形容詞</div><div><div class="d"><b>名詞を説明</b>する（どんな？）。</div><div class="ex en-s"><b>old</b> temples / a <b>famous</b> architect</div></div></div>
+    <div class="pos"><div class="tag t-d">副詞</div><div><div class="d"><b>名詞以外</b>（動詞・形容詞・文全体）を説明する。<b>いつ・どこで・なぜ・どのように・何のために</b>。</div><div class="ex en-s"><b>always</b> / <b>here</b> / <b>very</b> big</div></div></div>
+  </div>
+  ${bubble("ポイントは<b>「何を説明しているか」</b>。名詞を説明するなら形容詞、それ以外を説明するなら副詞です。")}`,
+
+ () => `<div class="card">
+    <div class="sec" style="margin-top:0">CHUNKS</div>
+    <h2 style="font-size:19px;margin-top:4px">カタマリにも品詞がある</h2>
+    <p class="muted" style="margin:0">このアプリでは、カタマリを3つの記号で括る。</p>
+    <div class="chunkrow n"><div class="hd cn">[ ]　名詞のカタマリ</div><div class="ds">名詞と同じ位置（S・O・C）に入る。</div><div class="eg en-s">Many tourists visit <span class="bn"><span class="cn">[</span>what is now a museum<span class="cn">]</span></span>.</div></div>
+    <div class="chunkrow a"><div class="hd ca">( )　形容詞のカタマリ</div><div class="ds">直前の<b>名詞</b>を、後ろから説明する。</div><div class="eg en-s">the money <span class="ba"><span class="ca">(</span>she saved<span class="ca">)</span></span> ／ temples <span class="ba"><span class="ca">(</span>built long ago<span class="ca">)</span></span></div></div>
+    <div class="chunkrow d"><div class="hd cd">&lt; &gt;　副詞のカタマリ</div><div class="ds">動詞や文全体を説明する（時・理由・目的など）。</div><div class="eg en-s"><span class="bd"><span class="cd">&lt;</span>Every summer<span class="cd">&gt;</span></span>, … ／ … <span class="bd"><span class="cd">&lt;</span>because it had a story<span class="cd">&gt;</span></span></div></div>
+    <p class="muted" style="margin:10px 0 0">※文法用語では「句」「節」と呼び分けるが、このアプリではまとめて「カタマリ」と呼ぶ。</p>
+  </div>`,
+
+ () => `<div class="card">
+    <div class="sec" style="margin-top:0">HOW TO PLAY</div>
+    <h2 style="font-size:19px;margin-top:4px">4 STEP で読み解く</h2>
+    <div class="step4"><div class="no">STEP<b>01</b></div><div><div class="tt">FIND V ── 文の動詞をタップ</div>
+      <div class="why"><b class="h">WHY?</b> 英文の骨格は <b>S ＋ V ＋ O / C</b>。V が決まれば、その前が主語、後ろが目的語・補語と、構造が一気に決まる。長い文ほど動詞の候補が増えるので、<b>カタマリの中の動詞にだまされず「本物の V」を見抜く</b>のが第一歩。</div></div></div>
+    <div class="step4"><div class="no">STEP<b>02</b></div><div><div class="tt">BRACKET ── カタマリを括る</div><div class="tx">カタマリの<b>始点 → 終点</b>の順にタップし、<span class="cn">[ ] 名詞</span>・<span class="ca">( ) 形容詞</span>・<span class="cd">&lt; &gt; 副詞</span> を選ぶ。</div></div></div>
+    <div class="step4"><div class="no">STEP<b>03</b></div><div><div class="tt">FOLD ── たたむ</div><div class="tx">カタマリをたたむと、<b>骨格だけ</b>が残る。27語の文も、骨格は数語。</div></div></div>
+    <div class="step4"><div class="no">STEP<b>04</b></div><div><div class="tt">MEANING ── 意味をつかむ</div><div class="tx">骨格＋カタマリから、元の英文の意味を選ぶ。</div></div></div>
+    <div class="lvline">${LV.map((l,k) => `<span style="background:${LVCOL[k]}">${l}</span>${k < 3 ? "▶" : ""}`).join("")}</div>
+    <p class="muted" style="text-align:center;margin:6px 0 0">骨格だけの CORE から、同じ骨格の文がどんどん長くなる。</p>
+  </div>
+  ${bubble("準備OK？ ここからが本編です。Let's go!")}`
+];
+function guide(k){
+  S.inRun = false; setPts(); $("#hm").classList.add("hide");
+  const last = k === GUIDE.length - 1;
+  app.innerHTML = `<div class="pop">${k === 0 ? `<button class="skip" id="skip">SKIP ▶ 本編へ</button>` : ""}${GUIDE[k]()}
+    <div class="gdots">${GUIDE.map((_,i) => `<i class="${i === k ? "on" : ""}"></i>`).join("")}</div>
+    <button class="btn main" id="gnext">${last ? "本編スタート ▶" : "NEXT ▶"}</button>
+    ${k > 0 ? `<button class="btn sub" id="gback">◀ BACK</button>` : ""}</div>`;
+  $("#gnext").onclick = () => last ? (save.guided = 1, persist(), home()) : guide(k + 1);
+  if ($("#gback")) $("#gback").onclick = () => guide(k - 1);
+  if ($("#skip")) $("#skip").onclick = () => { save.guided = 1; persist(); home(); };
+  scrollTo(0,0);
+}
+
+/* ===================== ホーム（本編） ===================== */
 function home(){
   S.inRun = false; setPts(); $("#hm").classList.add("hide");
   let h = `<div class="hero">
     <div class="en">READ LONG. FOLD SMART.</div>
     <div class="jp">長文は、<span>たためば</span>読める。</div>
-    <div class="sub">英検2級の長文が難しいのは、1文に修飾のカタマリがいくつも付いているから。カタマリを括って“たたむ”と、骨格は驚くほどシンプルになる。</div>
+    <div class="sub">CORE（骨格だけの文）から ADVANCED まで、同じ骨格の文がどんどん長くなる。カタマリを括って“たたむ”と、骨格はいつもシンプル。</div>
     ${save.best ? `<div class="stat">MAX LENGTH ── ${save.best} words</div>` : ""}
-  </div>`;
-  h += bubble("Hi! エリーです。BASIC → MEDIUM → ADVANCED と、同じ骨格の文がどんどん長くなっていきます。<b>27語の文</b>まで一気に駆け上がりましょう！");
-  h += `<div class="card"><h2>3つの記号</h2><div class="rule">
-    <span class="k kn">[ ]</span><span><b>名詞</b>のカタマリ ── 主語・目的語・補語として機能</span>
+  </div>
+  <div class="card"><div class="rule">
+    <span class="k kn">[ ]</span><span><b>名詞</b>のカタマリ ── S・O・C の位置に入る</span>
     <span class="k ka">( )</span><span><b>形容詞</b>のカタマリ ── 直前の<b>名詞</b>を修飾</span>
-    <span class="k kd">&lt; &gt;</span><span><b>副詞</b>のカタマリ ── 動詞や文全体を修飾（時・理由・目的）</span>
-  </div><div class="flow"><span>01 FIND V</span><span>02 BRACKET</span><span>03 FOLD</span><span>04 MEANING</span></div></div>`;
+    <span class="k kd">&lt; &gt;</span><span><b>副詞</b>のカタマリ ── 動詞や文全体を修飾</span>
+  </div><button class="btn sub" id="toGuide">はじめに（ルール説明）を見る</button></div>`;
   SERIES.forEach((s,si) => {
     h += `<div class="series"><div class="no">SERIES 0${si+1}</div><div class="nm">${s.name}</div><div class="fc">${esc(s.focus)}</div><div class="lvs">`;
     P.forEach((p,pi) => { if (p.series !== si) return; const r = save.rank[pi];
@@ -246,6 +366,7 @@ function home(){
   });
   h += `<footer>※エリー先生はAIで作ったキャラクターです。内容は現役の英検指導講師が監修しています。<br>例文はすべてオリジナルです。<br>英検®は、公益財団法人 日本英語検定協会の登録商標です。<br>このアプリは、同協会の承認や推奨、その他の検討を受けたものではありません。<br>© Q-UP英語塾</footer>`;
   app.innerHTML = h;
+  $("#toGuide").onclick = () => guide(0);
   document.querySelectorAll(".lv").forEach(b => b.onclick = () => { S.run = []; S.runPts = 0; S.combo = 0; S.inRun = true; start(+b.dataset.pi); });
   scrollTo(0,0);
 }
@@ -253,11 +374,11 @@ function home(){
 /* ===================== プレイ ===================== */
 function start(pi){
   Object.assign(S, { pi, phase:"verb", miss:0, found:new Set(), selS:null, selE:null, hint:0 });
-  const p = P[pi]; setPts(); $("#hm").classList.remove("hide");
+  const p = P[pi], core = p.chunks.length === 0; setPts(); $("#hm").classList.remove("hide");
   app.innerHTML = `<div class="card pop">
-    <div class="top"><span class="badge ${LV[p.stage]}">${LV[p.stage]}</span><span class="wc">${p.words} words</span><span class="sname">SERIES 0${p.series+1}｜${SERIES[p.series].name}</span></div>
-    <div class="prog">${[0,1,2].map(k => `<i class="${k < p.stage ? "d" : k === p.stage ? "c" : ""}"></i>`).join("")}</div>
-    <div class="steps" id="steps"><div>01 FIND V<small>動詞を特定</small></div><div>02 BRACKET<small>カタマリを括る</small></div><div>03 FOLD<small>たたむ</small></div><div>04 MEANING<small>意味</small></div></div>
+    <div class="top"><span class="badge ${LV[p.stage]}">${LV[p.stage]}</span><span class="wc">${p.words} words</span><span class="sname">SERIES 0${p.series+1}</span></div>
+    <div class="prog">${[0,1,2,3].map(k => `<i class="${k < p.stage ? "d" : k === p.stage ? "c" : ""}"></i>`).join("")}</div>
+    <div class="steps" id="steps"><div>01 FIND V<small>動詞を特定</small></div><div class="${core ? "na" : ""}">02 BRACKET<small>カタマリを括る</small></div><div class="${core ? "na" : ""}">03 FOLD<small>たたむ</small></div><div class="${core ? "na" : ""}">04 MEANING<small>意味</small></div></div>
     <div class="inst" id="inst"></div>
     <div class="sentence" id="sentence"></div>
     <div class="typebtns hide" id="typeBtns">
@@ -268,15 +389,15 @@ function start(pi){
     <div class="tools" id="tools"><button class="btn sub" id="hintBtn">💡 HINT</button><button class="btn sub hide" id="clearBtn">選び直す</button></div>
     <button class="btn fold hide" id="foldBtn" style="margin-top:12px">FOLD</button>
     <div class="fb" id="fb"></div>
-    <div class="found" id="found"></div>
+    <div class="parts" id="found"></div>
     <div id="after"></div>
   </div>`;
   $("#hintBtn").onclick = hint; $("#clearBtn").onclick = clearSel; $("#foldBtn").onclick = fold;
   document.querySelectorAll("#typeBtns button").forEach(b => b.onclick = () => pickType(b.dataset.t));
-  steps(0); $("#inst").innerHTML = "文全体の動詞（V）をタップ";
+  steps(0); $("#inst").innerHTML = core ? "まずは骨格だけの文。文の動詞（V）をタップ" : "文全体の動詞（V）をタップ";
   render(); scrollTo(0,0);
 }
-function steps(k){ [...$("#steps").children].forEach((d,i) => d.className = i < k ? "ok" : i === k ? "on" : ""); }
+function steps(k){ [...$("#steps").children].forEach((d,i) => { const na = d.classList.contains("na"); d.className = (i < k ? "ok" : i === k ? "on" : "") + (na ? " na" : ""); }); }
 function fb(cls, head, html){ const f = $("#fb"); f.className = "fb" + (cls ? " " + cls : ""); f.innerHTML = cls ? `<span class="h">${head}</span>${html}` : ""; }
 
 function render(){
@@ -309,13 +430,15 @@ function onTok(i){
   if (isPunct(t)) return;
   if (S.phase === "verb"){
     if (i === p.verb){
-      S.phase = "chunk"; steps(1); hit(10);
-      fb("ok", "NICE!", `<b>${esc(t)}</b> が主節の V。V 以外の部分に、修飾のカタマリが付いている。`);
-      S.hint = 0; render(); inst(); return;
+      hit(10); S.hint = 0;
+      if (p.chunks.length === 0){ S.phase = "done"; render(); coreDone(); return; }
+      S.phase = "chunk"; steps(1);
+      fb("ok", "NICE!", `<b>${esc(t)}</b> が文の V。V 以外の部分に、修飾のカタマリが付いている。`);
+      render(); inst(); return;
     }
     miss();
-    if (chunkOf(p,i) >= 0) fb("ng", "MISS", `<b>${esc(t)}</b> は修飾部（カタマリ）の内部にある語。修飾部の中の動詞は、主節の V にはならない。`);
-    else fb("ng", "MISS", `<b>${esc(t)}</b> は主節の V ではない。もう一度。`);
+    if (chunkOf(p,i) >= 0) fb("ng", "MISS", `<b>${esc(t)}</b> はカタマリの内部にある語。カタマリの中の動詞は、文の V にはならない。`);
+    else fb("ng", "MISS", `<b>${esc(t)}</b> は文の V ではない。もう一度。`);
     return;
   }
   if (S.phase === "chunk"){
@@ -326,6 +449,17 @@ function onTok(i){
     $("#clearBtn").classList.remove("hide");
     render(); inst();
   }
+}
+function skelHtml(p){
+  return `<div class="skel">${p.skel.map(([w,r],k) => `<div class="p" style="animation-delay:${k*.12}s"><div class="w2${r === "V" ? " v" : ""}${w === "[A]" ? " A" : ""}">${esc(w)}</div><div class="r">${r}</div></div>`).join("")}</div>`;
+}
+function coreDone(){
+  const p = P[S.pi];
+  $("#tools").classList.add("hide"); steps(4);
+  fb("ok", "NICE!", `<b>${esc(p.tokens[p.verb])}</b> が文の V。これが骨格。`);
+  $("#inst").innerHTML = "骨格（CORE）";
+  $("#after").innerHTML = skelHtml(p) + `<div class="sec">POINT</div><ul class="notes">${p.notes.map(n => `<li>${n}</li>`).join("")}</ul>`;
+  finishOne();
 }
 const left = () => P[S.pi].chunks.length - S.found.size;
 function inst(){
@@ -344,7 +478,7 @@ function pickType(t){
     if (c.t === t){
       S.found.add(m); S.selS = null; S.selE = null; S.hint = 0; hit(20);
       $("#typeBtns").classList.add("hide"); $("#clearBtn").classList.add("hide");
-      fb("ok", "GREAT!", `${tName[t]}のカタマリ ── ${esc(c.why)}。<br>意味：「${esc(c.ja)}」`);
+      fb("ok", "GREAT!", `${tName[t]}のカタマリ ── ${esc(c.why)}。`);
       render(); listFound();
       if (left() === 0) toFold(); else inst();
     } else {
@@ -358,15 +492,19 @@ function pickType(t){
   fb("ng", "MISS", over ? "惜しい。カタマリの<b>始点</b>か<b>終点</b>がずれている。" : "そこはカタマリではない（骨格の一部の可能性）。");
   S.selS = null; S.selE = null; $("#typeBtns").classList.add("hide"); render(); inst();
 }
+function partHtml(p,c){
+  return `<div class="part ${c.t}"><span class="lab">${esc(symO[c.t] + " " + symC[c.t])}　${tName[c.t]}のカタマリ</span>
+    <div class="en"><b>${esc(symO[c.t])}</b> ${esc(chunkText(p,c))} <b>${esc(symC[c.t])}</b></div>
+    <div class="jp">「${esc(c.ja)}」</div><div class="rl">役割：${esc(c.why)}</div></div>`;
+}
 function listFound(){
   const p = P[S.pi];
-  $("#found").innerHTML = [...S.found].sort((a,b) => p.chunks[a].s - p.chunks[b].s).map(ci => { const c = p.chunks[ci];
-    return `<div><b class="${c.t}">${esc(symO[c.t])}</b> ${esc(chunkText(p,c))} <b class="${c.t}">${esc(symC[c.t])}</b> <span>… ${esc(c.ja)}</span></div>`; }).join("");
+  $("#found").innerHTML = [...S.found].sort((a,b) => p.chunks[a].s - p.chunks[b].s).map(ci => partHtml(p, p.chunks[ci])).join("");
 }
 function hint(){
   const p = P[S.pi]; miss(); S.hint++;
   if (S.phase === "verb"){
-    if (S.hint === 1) fb("info", "HINT", "動詞が複数あるときは、<b>修飾部の外にある動詞</b>が V。関係詞（who / that）・接続詞（after / because）・分詞（-ing / 過去分詞）の後ろは、修飾部の内部である可能性が高い。");
+    if (S.hint === 1) fb("info", "HINT", "動詞が複数あるときは、<b>カタマリの外にある動詞</b>が V。関係代名詞（who / that）・接続詞（after / because）・分詞（-ing / 過去分詞）の後ろは、カタマリの内部である可能性が高い。");
     else { fb("info", "HINT", "光っている語が V。"); flash(p.verb, p.verb); }
   } else if (S.phase === "chunk"){
     const c = p.chunks.find((c,k) => !S.found.has(k));
@@ -393,12 +531,16 @@ function fold(){
   const core = p.skel.reduce((n,[w]) => n + (w === "[A]" ? 1 : w.split(" ").length), 0);
   setTimeout(() => {
     toast("FOLD!", `${p.words} → ${core} words`, "#0e6f78");
-    S.phase = "meaning"; steps(3);
+    S.phase = "meaning"; steps(3); fb("", "", "");
+    $("#found").innerHTML = "";
     $("#inst").innerHTML = "骨格";
-    $("#after").innerHTML = `<div class="skel">${p.skel.map(([w,r],k) => `<div class="p" style="animation-delay:${k*.12}s"><div class="w${r === "V" ? " v" : ""}">${esc(w)}</div><div class="r">${r}</div></div>`).join("")}</div>
-      ${p.A ? `<div class="muted">${esc(p.A)}</div>` : ""}
+    const parts = p.chunks.slice().sort((a,b) => a.s - b.s);
+    $("#after").innerHTML = `${skelHtml(p)}
+      ${p.A ? `<div class="amean">${p.A}</div>` : ""}
       <div class="shrink"><b>${p.words}</b> words → <b>${core}</b> words</div>
-      <div class="sec">04 MEANING</div><div class="inst">元の英文の意味として正しいものは？</div>
+      <div class="sec">PARTS ── カタマリの役割</div>
+      <div class="parts">${parts.map(c => partHtml(p,c)).join("")}</div>
+      <div class="sec">04 MEANING</div><div class="inst">骨格＋カタマリから、元の英文の意味を選べ</div>
       <div class="choices" id="choices">${shuffle([0,1,2,3]).map(k => `<button data-k="${k}">${esc(p.choices[k])}</button>`).join("")}</div>
       <div id="exp"></div>`;
     document.querySelectorAll("#choices button").forEach(b => b.onclick = () => choose(+b.dataset.k));
@@ -410,15 +552,20 @@ function choose(k){
   if (k === 0){ hit(30); fb("ok", "PERFECT!", "骨格が見えれば、長い文も一直線に読める。"); }
   else { miss(); fb("ng", "MISS", "緑が正解。骨格（S・V・O）と、各カタマリが何を修飾しているかを確認しよう。"); }
   steps(4);
+  $("#exp").innerHTML = `<div class="sec">EXPLANATION</div><ul class="notes">${p.notes.map(n => `<li>${n}</li>`).join("")}</ul>`;
+  finishOne();
+}
+function finishOne(){
+  const p = P[S.pi];
   const r = rankOf(S.miss);
   if (!save.rank[S.pi] || RORD[r] > RORD[save.rank[S.pi]]) save.rank[S.pi] = r;
   if (r !== "B") save.best = Math.max(save.best, p.words);
-  S.run.push({ pi:S.pi, r });
-  persist();
-  const last = p.stage === 2;
-  $("#exp").innerHTML = `<div class="sec">EXPLANATION</div><ul class="notes">${p.notes.map(n => `<li>${n}</li>`).join("")}</ul>
-    <button class="btn main" id="next" style="margin-top:14px">${last ? "RESULT ▶" : `NEXT ── ${LV[p.stage+1]} ▶`}</button>`;
-  $("#next").onclick = () => last ? result() : start(S.pi + 1);
+  S.run.push({ pi:S.pi, r }); persist();
+  const last = p.stage === 3;
+  const b = document.createElement("button"); b.className = "btn main"; b.id = "next";
+  b.textContent = last ? "RESULT ▶" : `NEXT ── ${LV[p.stage+1]} ▶`;
+  b.onclick = () => last ? result() : start(S.pi + 1);
+  $("#after").appendChild(b);
 }
 
 /* ===================== 結果 ===================== */
@@ -427,9 +574,9 @@ function result(){
   save.pts = Math.max(save.pts, S.runPts); persist();
   const maxW = Math.max(0, ...S.run.filter(x => x.r !== "B").map(x => P[x.pi].words));
   const allTop = S.run.length && S.run.every(x => x.r !== "B"), allS = S.run.length && S.run.every(x => x.r === "S");
-  const cmt = allS ? "Perfect! 修飾の量に惑わされず、骨格を一発で見抜けていますね。次のシリーズへ！"
+  const cmt = allS ? "Perfect! カタマリの量に惑わされず、骨格を一発で見抜けていますね。次のシリーズへ！"
     : allTop ? "Good job! 長い文でも骨格はシンプル。この感覚を、本番の長文でもそのまま使いましょう。"
-    : "長さに押されたら、まず<b>修飾部の外の動詞</b>を探すところから。もう一度チャレンジ！";
+    : "長さに押されたら、まず<b>カタマリの外の動詞</b>を探すところから。もう一度チャレンジ！";
   app.innerHTML = `<div class="card pop" style="text-align:center">
       <div class="sec" style="margin-top:0">SERIES 0${p.series+1} ── RESULT</div>
       <div style="font-weight:900;color:var(--main);font-size:17px;margin-top:4px">${SERIES[p.series].name}</div>
@@ -438,7 +585,7 @@ function result(){
     </div>
     <div class="card">${S.run.map(x => `<div class="rrow"><span><b style="letter-spacing:.1em;color:var(--main)">${LV[P[x.pi].stage]}</b>　${P[x.pi].words} words</span><span class="rk ${x.r}">${x.r}</span></div>`).join("")}</div>
     ${bubble(cmt)}
-    <button class="btn main" id="again" style="margin-top:16px">もう一度</button>
+    <button class="btn main" id="again">もう一度</button>
     ${p.series < SERIES.length - 1 ? `<button class="btn sub" id="nextS">次のシリーズへ ▶</button>` : ""}
     <button class="btn sub" id="toHome">HOME</button>`;
   $("#again").onclick = () => { S.run = []; S.runPts = 0; S.combo = 0; start(P.findIndex(q => q.series === p.series && q.stage === 0)); };
@@ -457,12 +604,13 @@ function confetti(gold){
 /* HOME（途中は2回タップで戻る） */
 let armed = false;
 $("#hm").onclick = () => {
-  if (S.phase !== "meaning" && !armed){ armed = true; $("#hm").textContent = "もう一度タップ"; setTimeout(() => { armed = false; $("#hm").textContent = "HOME"; }, 2500); return; }
+  const mid = S.phase !== "meaning" && S.phase !== "done";
+  if (mid && !armed){ armed = true; $("#hm").textContent = "もう一度タップ"; setTimeout(() => { armed = false; $("#hm").textContent = "HOME"; }, 2500); return; }
   armed = false; $("#hm").textContent = "HOME"; home();
 };
 
-window.__T = { P, S, onTok, pickType, choose, fold };
-home();
+window.__T = { P, S, onTok, pickType, choose, fold, guide, home };
+guide(0);
 </script>
 </body>
 </html>
