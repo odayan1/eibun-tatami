@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>英文たたみ ① 役割（試作）</title>
+<style>
+  :root { --n:#2fbdea; --a:#8dc63f; --d:#e0b400; --nBg:rgba(47,189,234,.16); --aBg:rgba(141,198,63,.20); --dBg:rgba(247,208,0,.25); --ink:#1f2933; --sub:#616e7c; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; color:var(--ink); background:#f3f6f9; }
+  header { background:linear-gradient(90deg,#2fbdea,#8dc63f); color:#fff; padding:10px 14px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:5; }
+  header .ttl { font-weight:800; font-size:17px; flex:1; }
+  header button { background:rgba(255,255,255,.25); color:#fff; border:1px solid rgba(255,255,255,.6); border-radius:16px; padding:5px 12px; font-size:14px; cursor:pointer; }
+  main { max-width:760px; margin:0 auto; padding:14px; }
+  .card { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,.08); padding:14px 16px; margin-bottom:12px; }
+  h2 { font-size:17px; margin:0 0 8px; }
+  .muted { color:var(--sub); font-size:13px; }
+  .btn { display:inline-block; border:none; border-radius:10px; padding:10px 16px; font-size:16px; font-weight:700; cursor:pointer; background:#2fbdea; color:#fff; }
+  .btn.sub { background:#e4e7eb; color:var(--ink); }
+  .btn.green { background:#5fa82a; }
+  .btn:disabled { opacity:.4; cursor:default; }
+  input[type=text] { font-size:16px; padding:8px 10px; border:1px solid #cbd2d9; border-radius:8px; width:180px; }
+
+  /* 記号 */
+  .sym-n { color:var(--n); font-weight:800; } .sym-a { color:#5fa82a; font-weight:800; } .sym-d { color:#c79a00; font-weight:800; }
+  .rule { display:grid; grid-template-columns:auto 1fr; gap:4px 10px; font-size:14px; align-items:baseline; }
+  .rule .k { font-size:18px; }
+
+  /* シリーズ */
+  .series { border:2px solid #e4e7eb; border-radius:12px; padding:10px 12px; margin:8px 0; }
+  .series .st { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+  .pill { border:1.5px solid #cbd2d9; background:#fff; border-radius:20px; padding:6px 12px; font-size:14px; cursor:pointer; }
+  .pill .stars { color:#f0a500; margin-left:4px; }
+  .best { font-size:15px; font-weight:800; color:#2b7a0b; }
+
+  /* プレイ */
+  .stagebar { display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:8px; flex-wrap:wrap; }
+  .stagebar .lv { font-weight:800; font-size:16px; }
+  .dots span { display:inline-block; width:10px; height:10px; border-radius:50%; background:#d9e2ec; margin-right:4px; }
+  .dots span.on { background:#2fbdea; } .dots span.done { background:#8dc63f; }
+  .steps { display:flex; gap:4px; margin:6px 0 10px; }
+  .steps div { flex:1; text-align:center; font-size:12px; padding:5px 2px; border-radius:6px; background:#eef2f6; color:#7b8794; }
+  .steps div.on { background:#2fbdea; color:#fff; font-weight:800; }
+  .steps div.ok { background:#d3f9d8; color:#2b7a0b; }
+  .inst { font-size:16px; font-weight:700; margin-bottom:8px; }
+  .sentence { font-size:22px; line-height:2.5; padding:8px 4px; word-break:normal; }
+  .tok { display:inline-block; padding:0 5px; margin:0 1px; border-radius:6px; cursor:pointer; position:relative; transition:background .15s; user-select:none; }
+  .tok:hover { background:#eef2f6; }
+  .tok.punct { cursor:default; padding:0 1px; margin-left:-2px; }
+  .tok.punct:hover { background:none; }
+  .tok.sel { background:#ffe08a !important; }
+  .tok.isV { color:#d6336c; font-weight:800; }
+  .tok.isV::after { content:"V"; position:absolute; left:50%; transform:translateX(-50%); top:-15px; font-size:12px; color:#d6336c; font-weight:800; line-height:1; }
+  .tok.flash { animation:flash 1s ease 2; }
+  @keyframes flash { 0%,100%{background:transparent;} 50%{background:#ffd43b;} }
+  .seg { transition:opacity .6s; }
+  .seg.f-n { background:var(--nBg); border-radius:6px; }
+  .seg.f-a { background:var(--aBg); border-radius:6px; }
+  .seg.f-d { background:var(--dBg); border-radius:6px; }
+  .br { font-weight:800; font-size:24px; padding:0 1px; }
+  .br.n { color:var(--n); } .br.a { color:#5fa82a; } .br.d { color:#c79a00; }
+  .seg.fading { opacity:0; }
+  .chipA { display:inline-block; background:var(--n); color:#fff; border-radius:8px; padding:0 10px; font-weight:800; }
+  .typebtns { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+  .typebtns button { flex:1; min-width:120px; border-radius:10px; padding:10px 6px; font-size:16px; font-weight:800; cursor:pointer; background:#fff; }
+  .tb-n { border:2px solid var(--n); color:#0b7fa8; } .tb-a { border:2px solid var(--a); color:#3f7d12; } .tb-d { border:2px solid #e0b400; color:#9a7400; }
+  .tools { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .fb { margin-top:10px; padding:10px 12px; border-radius:10px; font-size:15px; line-height:1.6; display:none; }
+  .fb.ok { background:#ebfbee; border:1px solid #8ce99a; display:block; }
+  .fb.ng { background:#fff5f5; border:1px solid #ffa8a8; display:block; }
+  .fb.info { background:#f1f8fd; border:1px solid #a5d8ff; display:block; }
+  .found-list { font-size:14px; margin-top:8px; }
+  .found-list div { margin:3px 0; }
+  .skel { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin:10px 0; }
+  .skel .part { text-align:center; }
+  .skel .w { font-size:22px; font-weight:800; padding:4px 10px; border-radius:8px; background:#f1f3f5; }
+  .skel .r { font-size:13px; font-weight:800; color:#7b8794; margin-top:2px; }
+  .choices button { display:block; width:100%; text-align:left; margin:6px 0; padding:10px 12px; font-size:15px; line-height:1.5; border-radius:10px; border:1.5px solid #cbd2d9; background:#fff; cursor:pointer; }
+  .choices button.right { border-color:#2f9e44; background:#ebfbee; }
+  .choices button.wrong { border-color:#e03131; background:#fff5f5; }
+  .choices button:disabled { cursor:default; color:var(--ink); }
+  .notes li { margin:4px 0; line-height:1.6; }
+  .res-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eef2f6; font-size:15px; }
+  .res-row .stars { color:#f0a500; font-size:18px; }
+  textarea { width:100%; font-size:13px; height:170px; border-radius:8px; border:1px solid #cbd2d9; padding:8px; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+<header>
+  <div class="ttl">英文たたみ ① 役割 <span style="font-size:12px;font-weight:400">（試作）</span></div>
+  <button id="homeBtn" class="hidden">🏠 ホーム</button>
+</header>
+
+<main>
+  <!-- ===== ホーム ===== -->
+  <section id="home">
+    <div class="card">
+      <h2>長い文も、たためば短い文</h2>
+      <p class="muted" style="margin:0 0 8px">長い文がむずかしいのは、カタマリ（修飾語）がたくさんくっついているから。カタマリをくくって「たたむ」と、短い文と同じ骨組みが見えてきます。</p>
+      <div class="rule">
+        <span class="k sym-n">[ ]</span><span><b>名詞</b>のカタマリ … 主語・目的語・補語になる（例：[what is now a museum]）</span>
+        <span class="k sym-a">( )</span><span><b>形容詞</b>のカタマリ … 前の<b>名詞</b>を説明する（例：the money (she saved)）</span>
+        <span class="k sym-d">&lt; &gt;</span><span><b>副詞</b>のカタマリ … 動詞や文全体を説明する（いつ・なぜ・何のため）</span>
+      </div>
+      <p class="muted" style="margin:10px 0 0">すすめ方：① 文の動詞（V）を見つける → ② カタマリをくくる → ③ たたむ → ④ 意味をつかむ</p>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label>なまえ：<input type="text" id="nameIn" placeholder="例：姫野"></label>
+        <span class="best" id="bestLen"></span>
+      </div>
+    </div>
+    <div class="card" id="seriesList"></div>
+  </section>
+
+  <!-- ===== プレイ ===== -->
+  <section id="play" class="hidden">
+    <div class="card">
+      <div class="stagebar">
+        <span id="seriesName" style="font-weight:700"></span>
+        <span class="dots" id="dots"></span>
+        <span class="lv" id="lvName"></span>
+      </div>
+      <div class="steps" id="steps">
+        <div>① Vを見つける</div><div>② カタマリをくくる</div><div>③ たたむ</div><div>④ 意味</div>
+      </div>
+      <div class="inst" id="inst"></div>
+      <div class="sentence" id="sentence"></div>
+      <div class="typebtns hidden" id="typeBtns">
+        <button class="tb-n" data-t="n">[ ] 名詞</button>
+        <button class="tb-a" data-t="a">( ) 形容詞</button>
+        <button class="tb-d" data-t="d">&lt; &gt; 副詞</button>
+      </div>
+      <div class="tools">
+        <button class="btn sub" id="hintBtn">💡 ヒント</button>
+        <button class="btn sub hidden" id="clearBtn">選びなおす</button>
+        <button class="btn green hidden" id="foldBtn">たたむ！</button>
+      </div>
+      <div class="fb" id="fb"></div>
+      <div class="found-list" id="foundList"></div>
+      <div id="skelArea" class="hidden">
+        <div class="inst" style="margin-top:12px">骨組み</div>
+        <div class="skel" id="skel"></div>
+        <div class="muted" id="skelA"></div>
+      </div>
+      <div id="choiceArea" class="hidden">
+        <div class="inst" style="margin-top:12px">④ もとの長い文の意味は？</div>
+        <div class="choices" id="choices"></div>
+      </div>
+      <div id="explainArea" class="hidden">
+        <div class="inst" style="margin-top:12px">かいせつ</div>
+        <ul class="notes" id="notes"></ul>
+        <div style="text-align:right"><button class="btn" id="nextBtn">次へ ▶</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 結果 ===== -->
+  <section id="result" class="hidden">
+    <div class="card">
+      <h2 id="resTitle"></h2>
+      <div id="resRows"></div>
+      <p class="best" id="resMsg" style="margin-top:10px"></p>
+    </div>
+    <div class="card">
+      <h2>先生に送る</h2>
+      <p class="muted">下のボタンでコピーして、LINEやメールに貼り付けて送ってね。</p>
+      <textarea id="copyText" readonly></textarea>
+      <div class="tools">
+        <button class="btn" id="copyBtn">📋 コピーする</button>
+        <button class="btn sub" id="againBtn">もう一度</button>
+        <button class="btn sub" id="homeBtn2">ホームへ</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ================= データ ================= */
+// t: n=名詞 a=形容詞 d=副詞 / s,e = トークン番号（句読点も1トークン）
+const SERIES = [
+  { name:"シリーズ1　名詞のカタマリ", focus:"what is now ～" },
+  { name:"シリーズ2　関係代名詞の省略", focus:"The money (she saved)" },
+  { name:"シリーズ3　分詞のカタマリ", focus:"Growing up ～ ／ built ～" }
+];
+const LV = ["短い文","ちょっと長い文","超長い文"];
+const P = [
+ { series:0, stage:0,
+   text:"Many tourists visit what is now a museum .", verb:2,
+   chunks:[{s:3,e:7,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）になっている"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（今は博物館になっている場所）",
+   choices:["多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、今の博物館が何であるかを訪ねる。","多くの観光客が、今すぐ博物館を訪れる。","今では多くの観光客が博物館になっている。"],
+   notes:["<b>what is now ～</b> ＝「今は～になっているもの・場所」。what は the thing (place) which のこと。","疑問詞の「何」と読むと意味が通らない。visit のすぐ後ろにあるので、まるごと visit の目的語（O）＝<b>名詞のカタマリ</b>。","is はカタマリの中の動詞。文全体のVは visit。","よく出る形：He was born in what is now Germany.（今のドイツにあたる地域で生まれた）"] },
+ { series:0, stage:1,
+   text:"Many tourists from abroad visit what is now a museum .", verb:4,
+   chunks:[{s:2,e:3,t:"a",ja:"海外からの",why:"前の名詞 tourists を説明している"},{s:5,e:9,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）になっている"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（今は博物館になっている場所）",
+   choices:["海外からの多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、海外にある博物館を訪れる。","海外の多くの博物館を、観光客が訪れる。","多くの観光客が、今の海外の博物館が何かを訪ねる。"],
+   notes:["(from abroad) は前の名詞 tourists を説明 →「海外からの観光客」。","<b>名詞のすぐ後ろの前置詞のカタマリ</b>は、まず「前の名詞の説明（形容詞）」を疑おう。","骨組みは短い文とまったく同じ：Many tourists visit [A]."] },
+ { series:0, stage:2,
+   text:"Every summer , many tourists from abroad visit what is now a museum to learn about the history of the town .", verb:7,
+   chunks:[{s:0,e:1,t:"d",ja:"毎年夏に",why:"visit が「いつ」かを説明している（時）"},{s:5,e:6,t:"a",ja:"海外からの",why:"前の名詞 tourists を説明している"},{s:8,e:12,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）になっている"},{s:13,e:20,t:"d",ja:"町の歴史について学ぶために",why:"visit の目的（〜するために）を説明している"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（今は博物館になっている場所）",
+   choices:["毎年夏、海外からの多くの観光客が、町の歴史について学ぶために、今は博物館になっている場所を訪れる。","毎年夏、町の歴史について学べる海外の博物館を、多くの観光客が訪れる。","毎年夏、多くの観光客が海外を訪れ、今は博物館で町の歴史を学んでいる。","毎年夏、海外の多くの観光客は、町の歴史を学ぶことが今の博物館だと知る。"],
+   notes:["<Every summer> は「いつ」を表す副詞のカタマリ。","<to learn about … town> は visit の目的（〜するために）を表す副詞のカタマリ。the history of the town の (of the town) はこのカタマリの中の説明なので、まとめて1つでOK。","20語あっても、たたむと Many tourists visit [A]. ── 短い文と同じ骨組み！"] },
+
+ { series:1, stage:0,
+   text:"The money she saved helped her family .", verb:4,
+   chunks:[{s:2,e:3,t:"a",ja:"彼女がためた",why:"前の名詞 money を説明している（that が省略）"}],
+   skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
+   choices:["彼女がためたお金が、家族を助けた。","そのお金が彼女を救い、家族を助けた。","彼女はお金をためて、家族を助けた。","彼女の家族がためたお金が、役に立った。"],
+   notes:["The money (she saved) は The money (that) she saved の that が<b>省略</b>された形。","<b>名詞＋主語＋動詞</b>（money she saved）と並んだら、間に関係代名詞が隠れている合図。","saved はカタマリの中の動詞。文全体のVは helped。saved を「救った」と読むと意味がこわれる。"] },
+ { series:1, stage:1,
+   text:"The money she saved from her part-time job helped her family of five .", verb:8,
+   chunks:[{s:2,e:7,t:"a",ja:"彼女がアルバイトでためた",why:"前の名詞 money を説明している（that が省略）"},{s:11,e:12,t:"a",ja:"5人の",why:"前の名詞 family を説明している"}],
+   skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
+   choices:["彼女がアルバイトでためたお金が、5人家族を助けた。","5人家族がアルバイトでためたお金が、彼女を助けた。","そのお金は彼女をアルバイトから救い、5人家族を助けた。","彼女がためたお金で、5人がアルバイトを手伝った。"],
+   notes:["(she saved from her part-time job) が money を説明。カタマリは job まで続く（どこで終わるか＝次の動詞 helped の手前）。","(of five) は family を説明 →「5人家族」。","骨組みは短い文と同じ：The money helped her family."] },
+ { series:1, stage:2,
+   text:"After her father lost his job , the money she had saved from her part-time job helped her family of five for almost a year .", verb:16,
+   chunks:[{s:0,e:5,t:"d",ja:"父親が仕事を失ったあと",why:"文全体が「いつ」かを説明している（時）"},{s:9,e:15,t:"a",ja:"彼女がアルバイトでためていた",why:"前の名詞 money を説明している（that が省略）"},{s:19,e:20,t:"a",ja:"5人の",why:"前の名詞 family を説明している"},{s:21,e:24,t:"d",ja:"ほぼ1年間",why:"helped の期間を説明している"}],
+   skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
+   choices:["父親が仕事を失ったあと、彼女がアルバイトでためていたお金が、5人家族をほぼ1年間支えた。","父親が仕事を失ったあと、彼女はアルバイトでためたお金を1年間で使いきった。","彼女の父親は、彼女がアルバイトでためたお金のせいで、ほぼ1年間仕事を失った。","ほぼ1年間アルバイトをした彼女は、父親の仕事を見つけて5人家族を助けた。"],
+   notes:["<After her father lost his job> は「いつ」を表す副詞のカタマリ（after ＋ S V）。","動詞は lost / had saved / helped の3つ。<b>カタマリの外にあるのは helped だけ</b> → これが文のV。","had saved（過去完了）＝ helped よりも<b>前から</b>ためていた、という時間の順番を表している。","24語でも、たたむと The money helped her family. の5語！"] },
+
+ { series:2, stage:0,
+   text:"Growing up in Kyoto , he loved old temples .", verb:6,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"後ろの文全体を説明している（分詞構文）"}],
+   skel:[["He","S"],["loved","V"],["old temples","O"]], A:"",
+   choices:["京都で育ったので、彼は古いお寺が大好きだった。","京都が大きくなるにつれて、彼は古いお寺を愛した。","彼は京都で古いお寺を育てるのが好きだった。","京都で育った古いお寺を、彼は愛した。"],
+   notes:["Growing up in Kyoto は<b>分詞構文</b>。主語は書いていないが、<b>文の主語 he と同じ</b>（育ったのは彼）。","「〜する中で・〜なので」と、後ろの文全体を説明する副詞のカタマリ。"] },
+ { series:2, stage:1,
+   text:"Growing up in Kyoto , he loved old temples built hundreds of years ago .", verb:6,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"後ろの文全体を説明している（分詞構文）"},{s:9,e:13,t:"a",ja:"何百年も前に建てられた",why:"前の名詞 temples を説明している"}],
+   skel:[["He","S"],["loved","V"],["old temples","O"]], A:"",
+   choices:["京都で育った彼は、何百年も前に建てられた古いお寺が大好きだった。","京都で育った彼は、何百年も前に古いお寺を建てるのが好きだった。","京都で育った彼は古いお寺が好きで、何百年も前にそれを建てた。","何百年も前に京都で育った彼は、古いお寺を愛した。"],
+   notes:["built は過去形ではなく<b>過去分詞</b>。(built hundreds of years ago) が temples を説明 →「何百年も前に建てられたお寺」。","<b>名詞＋過去分詞</b>（temples built）は、まず「〜された名詞」を疑おう。built をVと読むと「お寺が建てた」になってしまう。"] },
+ { series:2, stage:2,
+   text:"Growing up in Kyoto , the boy who later became a famous architect loved old temples built hundreds of years ago because each one had its own story .", verb:13,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"後ろの文全体を説明している（分詞構文）"},{s:7,e:12,t:"a",ja:"のちに有名な建築家になった",why:"前の名詞 boy を説明している"},{s:16,e:20,t:"a",ja:"何百年も前に建てられた",why:"前の名詞 temples を説明している"},{s:21,e:27,t:"d",ja:"1つ1つに物語があったので",why:"loved の理由を説明している"}],
+   skel:[["The boy","S"],["loved","V"],["old temples","O"]], A:"",
+   choices:["京都で育ち、のちに有名な建築家になったその少年は、1つ1つに物語があるので、何百年も前に建てられた古いお寺が大好きだった。","京都で育ったその少年は、有名な建築家が何百年も前に建てた古いお寺が好きだった。","その少年は、古いお寺に物語があったので、のちに京都で有名な建築家になった。","京都で育った有名な建築家は、その少年に古いお寺の物語を話した。"],
+   notes:["(who later became a famous architect) が boy を説明。<b>主語 the boy と動詞 loved の間に割りこんでいる</b>のがポイント。","動詞っぽい語は became / loved / built / had の4つ。カタマリの外にあるのは loved だけ。","<because each one had its own story> は loved の理由を表す副詞のカタマリ。","27語でも、たたむと The boy loved old temples. の5語！"] }
+];
+P.forEach(p => { p.tokens = p.text.split(" "); p.words = p.tokens.filter(t => !/^[.,]$/.test(t)).length; });
+
+/* ================= 状態 ================= */
+const KEY = "eibunTatami1_v1";
+const MEM = {};
+const LS = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return k in MEM ? MEM[k] : null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){ MEM[k] = v; } }
+};
+let save; try { save = JSON.parse(LS.get(KEY) || "null") || {stars:{},best:0}; } catch(e){ save = {stars:{},best:0}; }
+const S = { pi:0, phase:"verb", mistakes:0, log:[], found:new Set(), selS:null, selE:null, hint:0, runResults:[] };
+const $ = id => document.getElementById(id);
+const symO = {n:"[",a:"(",d:"<"}, symC = {n:"]",a:")",d:">"}, tName = {n:"名詞",a:"形容詞",d:"副詞"};
+const isPunct = t => /^[.,]$/.test(t);
+const chunkOf = (p,i) => p.chunks.findIndex(c => i >= c.s && i <= c.e);
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const chunkText = (p,c) => p.tokens.slice(c.s, c.e+1).join(" ").replace(/ ([.,])/g,"$1");
+const starStr = n => "★".repeat(n) + "☆".repeat(3-n);
+
+/* ================= ホーム ================= */
+function showHome(){
+  $("home").classList.remove("hidden"); $("play").classList.add("hidden"); $("result").classList.add("hidden"); $("homeBtn").classList.add("hidden");
+  $("nameIn").value = LS.get("eibunTatamiName") || "";
+  $("bestLen").textContent = save.best ? `📏 読めた最長の文：${save.best}語` : "";
+  let h = "";
+  SERIES.forEach((s,si) => {
+    h += `<div class="series"><b>${s.name}</b> <span class="muted">${esc(s.focus)}</span><div class="st">`;
+    P.forEach((p,pi) => { if (p.series !== si) return;
+      const st = save.stars[pi] || 0;
+      h += `<button class="pill" data-pi="${pi}">${LV[p.stage]}（${p.words}語）${st ? `<span class="stars">${starStr(st)}</span>` : ""}</button>`;
+    });
+    h += `</div></div>`;
+  });
+  $("seriesList").innerHTML = h;
+  document.querySelectorAll(".pill").forEach(b => b.onclick = () => { S.runResults = []; startProblem(+b.dataset.pi); });
+}
+$("nameIn").addEventListener("input", e => LS.set("eibunTatamiName", e.target.value.trim()));
+
+/* ================= 問題 ================= */
+function startProblem(pi){
+  Object.assign(S, { pi, phase:"verb", mistakes:0, log:[], found:new Set(), selS:null, selE:null, hint:0 });
+  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("play").classList.remove("hidden"); $("homeBtn").classList.remove("hidden");
+  const p = P[pi];
+  $("seriesName").textContent = SERIES[p.series].name;
+  $("lvName").textContent = `${LV[p.stage]}（${p.words}語）`;
+  $("dots").innerHTML = [0,1,2].map(k => `<span class="${k < p.stage ? "done" : k === p.stage ? "on" : ""}"></span>`).join("");
+  ["skelArea","choiceArea","explainArea","foldBtn","clearBtn","typeBtns"].forEach(id => $(id).classList.add("hidden"));
+  $("hintBtn").classList.remove("hidden"); $("hintBtn").disabled = false;
+  $("foundList").innerHTML = ""; setFb("", "");
+  setSteps(0);
+  $("inst").textContent = "① この文全体の動詞（V）はどれ？ タップしよう";
+  renderSentence();
+  window.scrollTo(0,0);
+}
+function setSteps(k){ [...$("steps").children].forEach((d,i) => d.className = i < k ? "ok" : i === k ? "on" : ""); }
+function setFb(cls, html){ const f = $("fb"); f.className = "fb" + (cls ? " " + cls : ""); f.innerHTML = html; }
+
+function renderSentence(){
+  const p = P[S.pi]; let h = ""; let i = 0;
+  while (i < p.tokens.length){
+    const ci = chunkOf(p,i);
+    if (ci >= 0){
+      const c = p.chunks[ci], f = S.found.has(ci);
+      h += `<span class="seg${f ? " f-" + c.t : ""}" data-ci="${ci}">`;
+      if (f) h += `<span class="br ${c.t}">${esc(symO[c.t])}</span>`;
+      for (let k = c.s; k <= c.e; k++) h += tokHtml(p,k);
+      if (f) h += `<span class="br ${c.t}">${esc(symC[c.t])}</span>`;
+      h += `</span> `; i = c.e + 1;
+    } else { h += tokHtml(p,i) + " "; i++; }
+  }
+  h = h.replace(/ (<span class="tok punct)/g, "$1");
+  $("sentence").innerHTML = h;
+  document.querySelectorAll("#sentence .tok").forEach(el => el.onclick = () => onTok(+el.dataset.i));
+}
+function tokHtml(p,k){
+  const t = p.tokens[k]; let cls = "tok";
+  if (isPunct(t)) cls += " punct";
+  if (k === p.verb && S.phase !== "verb") cls += " isV";
+  if (S.selS !== null){ const a = Math.min(S.selS, S.selE ?? S.selS), b = Math.max(S.selS, S.selE ?? S.selS); if (k >= a && k <= b) cls += " sel"; }
+  return `<span class="${cls}" data-i="${k}">${esc(t)}</span>`;
+}
+function flash(from, to){ for (let k = from; k <= to; k++){ const el = document.querySelector(`#sentence .tok[data-i="${k}"]`); if (el){ el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); } } }
+
+function onTok(i){
+  const p = P[S.pi], t = p.tokens[i];
+  if (isPunct(t)) return;
+  if (S.phase === "verb"){
+    if (i === p.verb){
+      S.phase = "chunk"; setSteps(1);
+      setFb("ok", `⭕ 正解！ <b>${esc(t)}</b> が文全体のV。V以外の部分に、カタマリがくっついているよ。`);
+      startChunkPhase(); return;
+    }
+    S.mistakes++;
+    const ci = chunkOf(p,i);
+    if (ci >= 0){ S.log.push(`Vの取りちがえ：${t}`); setFb("ng", `❌ <b>${esc(t)}</b> は、ある<b>カタマリの中</b>の語。カタマリの中の動詞は、文全体のVにはならないよ。もう一度！`); }
+    else { S.log.push(`Vの取りちがえ：${t}`); setFb("ng", `❌ <b>${esc(t)}</b> は文のVではないよ。もう一度！`); }
+    return;
+  }
+  if (S.phase === "chunk"){
+    const ci = chunkOf(p,i);
+    if (ci >= 0 && S.found.has(ci)){ setFb("info", "そこはもうくくったよ。ほかのカタマリを探そう。"); return; }
+    if (S.selS === null || S.selE !== null){ S.selS = i; S.selE = null; $("typeBtns").classList.add("hidden"); }
+    else { S.selE = i; $("typeBtns").classList.remove("hidden"); }
+    $("clearBtn").classList.remove("hidden");
+    renderSentence(); updateChunkInst();
+  }
+}
+function remaining(){ return P[S.pi].chunks.length - S.found.size; }
+function startChunkPhase(){ S.selS = null; S.selE = null; S.hint = 0; renderSentence(); updateChunkInst(); }
+function updateChunkInst(){
+  const n = remaining();
+  if (S.selS === null) $("inst").innerHTML = `② カタマリの<b>最初の語</b>をタップ（あと <b>${n}</b> 個）`;
+  else if (S.selE === null) $("inst").innerHTML = `② カタマリの<b>最後の語</b>をタップ（1語だけなら同じ語をもう一度）`;
+  else $("inst").innerHTML = `② このカタマリの種類は？`;
+}
+$("clearBtn").onclick = () => { S.selS = null; S.selE = null; $("typeBtns").classList.add("hidden"); renderSentence(); updateChunkInst(); };
+document.querySelectorAll("#typeBtns button").forEach(b => b.onclick = () => pickType(b.dataset.t));
+
+function pickType(t){
+  const p = P[S.pi]; const s = Math.min(S.selS, S.selE), e = Math.max(S.selS, S.selE);
+  const m = p.chunks.findIndex((c,ci) => !S.found.has(ci) && c.s === s && c.e === e);
+  if (m >= 0){
+    const c = p.chunks[m];
+    if (c.t === t){
+      S.found.add(m); S.selS = null; S.selE = null; S.hint = 0;
+      $("typeBtns").classList.add("hidden"); $("clearBtn").classList.add("hidden");
+      setFb("ok", `⭕ ${esc(symO[t])} ${esc(chunkText(p,c))} ${esc(symC[t])} ＝ <b>${tName[t]}</b>のカタマリ。${esc(c.why)}。<br>意味：「${esc(c.ja)}」`);
+      renderSentence(); renderFoundList();
+      if (remaining() === 0) toFold(); else updateChunkInst();
+    } else {
+      S.mistakes++; S.log.push(`種類のまちがい：${chunkText(p,c)} を${tName[t]}に`);
+      setFb("ng", `△ 範囲は正解！ でも種類がちがう。ヒント：このカタマリは「${esc(c.why)}」よ。`);
+    }
+    return;
+  }
+  S.mistakes++;
+  const over = p.chunks.some((c,ci) => !S.found.has(ci) && !(e < c.s || s > c.e));
+  S.log.push(`範囲のまちがい：${p.tokens.slice(s,e+1).join(" ")}`);
+  setFb("ng", over ? "❌ おしい！ カタマリの<b>始まり</b>か<b>終わり</b>がずれているよ。" : "❌ そこはカタマリではないよ（骨組みの部分かも）。");
+  S.selS = null; S.selE = null; $("typeBtns").classList.add("hidden"); renderSentence(); updateChunkInst();
+}
+function renderFoundList(){
+  const p = P[S.pi];
+  $("foundList").innerHTML = [...S.found].sort((a,b) => p.chunks[a].s - p.chunks[b].s).map(ci => { const c = p.chunks[ci];
+    return `<div><span class="br ${c.t}" style="font-size:16px">${esc(symO[c.t] + " " + symC[c.t])}</span> ${esc(chunkText(p,c))} … 「${esc(c.ja)}」</div>`; }).join("");
+}
+
+$("hintBtn").onclick = () => {
+  const p = P[S.pi]; S.mistakes++; S.hint++;
+  if (S.phase === "verb"){
+    S.log.push("ヒント（V）");
+    if (S.hint === 1) setFb("info", "💡 動詞っぽい語がいくつかあるときは、<b>カタマリの中にない動詞</b>が文のV。who / that / 接続詞（after, because）のあと、-ing / 過去分詞のあとに続く動詞はカタマリの中かも。");
+    else { setFb("info", "💡 光っている語がVだよ。"); flash(p.verb, p.verb); }
+  } else if (S.phase === "chunk"){
+    const ci = p.chunks.findIndex((c,k) => !S.found.has(k)); const c = p.chunks[ci];
+    S.log.push(`ヒント（カタマリ：${chunkText(p,c)}）`);
+    if (S.hint === 1){ setFb("info", "💡 光っている語から、カタマリが始まるよ。"); flash(c.s, c.s); }
+    else { setFb("info", `💡 光っている範囲がカタマリ。種類は「${esc(c.why)}」から考えよう。`); flash(c.s, c.e); }
+  }
+};
+
+/* ================= たたむ ================= */
+function toFold(){
+  S.phase = "fold"; setSteps(2);
+  $("inst").innerHTML = "③ カタマリが全部見つかった！ たたんで骨組みを見よう";
+  $("hintBtn").classList.add("hidden"); $("foldBtn").classList.remove("hidden");
+}
+$("foldBtn").onclick = () => {
+  const p = P[S.pi]; $("foldBtn").classList.add("hidden");
+  document.querySelectorAll("#sentence .seg").forEach(seg => {
+    const c = p.chunks[+seg.dataset.ci];
+    seg.classList.add("fading");
+    setTimeout(() => {
+      if (c.t === "n"){ seg.className = "seg"; seg.innerHTML = `<span class="chipA">[ A ]</span>`; }
+      else { seg.style.display = "none"; hideAdjComma(seg); }
+    }, 600);
+  });
+  setTimeout(() => {
+    $("skel").innerHTML = p.skel.map(([w,r]) => `<div class="part"><div class="w" style="${r==="V" ? "color:#d6336c" : ""}">${esc(w)}</div><div class="r">${r}</div></div>`).join("");
+    $("skelA").textContent = p.A;
+    $("skelArea").classList.remove("hidden");
+    setSteps(3); S.phase = "meaning";
+    $("inst").innerHTML = `③ ${p.words}語の文が、たたむとこれだけ！`;
+    showChoices();
+  }, 700);
+};
+function hideAdjComma(seg){
+  [seg.previousElementSibling, seg.nextElementSibling].forEach(el => { if (el && el.classList.contains("punct") && el.textContent === ",") el.style.display = "none"; });
+}
+function showChoices(){
+  const p = P[S.pi];
+  const order = [0,1,2,3].sort(() => Math.random() - .5);
+  $("choices").innerHTML = order.map(k => `<button data-k="${k}">${esc(p.choices[k])}</button>`).join("");
+  document.querySelectorAll("#choices button").forEach(b => b.onclick = () => pickChoice(+b.dataset.k));
+  $("choiceArea").classList.remove("hidden");
+}
+function pickChoice(k){
+  const p = P[S.pi];
+  document.querySelectorAll("#choices button").forEach(b => { b.disabled = true; if (+b.dataset.k === 0) b.classList.add("right"); else if (+b.dataset.k === k) b.classList.add("wrong"); });
+  if (k === 0) setFb("ok", "⭕ 正解！ 骨組みが見えると、長い文もまっすぐ読めるね。");
+  else { S.mistakes++; S.log.push("意味の4択をまちがえた"); setFb("ng", "❌ 緑の選択肢が正解。骨組み（S・V・O）と、カタマリが何を説明しているかを見直そう。"); }
+  setSteps(4);
+  $("notes").innerHTML = p.notes.map(n => `<li>${n}</li>`).join("");
+  $("explainArea").classList.remove("hidden");
+  const last = p.stage === 2;
+  $("nextBtn").textContent = last ? "結果を見る ▶" : `次は「${LV[p.stage+1]}」▶`;
+  finishProblem();
+}
+function finishProblem(){
+  const p = P[S.pi];
+  const stars = S.mistakes === 0 ? 3 : S.mistakes <= 2 ? 2 : 1;
+  save.stars[S.pi] = Math.max(save.stars[S.pi] || 0, stars);
+  if (stars >= 2) save.best = Math.max(save.best || 0, p.words);
+  LS.set(KEY, JSON.stringify(save));
+  S.runResults.push({ pi:S.pi, stars, log:S.log.slice() });
+}
+$("nextBtn").onclick = () => {
+  const p = P[S.pi];
+  if (p.stage < 2) startProblem(S.pi + 1); else showResult();
+};
+
+/* ================= 結果 ================= */
+function showResult(){
+  $("play").classList.add("hidden"); $("result").classList.remove("hidden");
+  const p = P[S.pi]; const s = SERIES[p.series];
+  $("resTitle").textContent = `${s.name}　結果`;
+  $("resRows").innerHTML = S.runResults.map(r => `<div class="res-row"><span>${LV[P[r.pi].stage]}（${P[r.pi].words}語）</span><span class="stars">${starStr(r.stars)}</span></div>`).join("");
+  const maxW = Math.max(...S.runResults.filter(r => r.stars >= 2).map(r => P[r.pi].words), 0);
+  $("resMsg").textContent = maxW ? `📏 ${maxW}語の文が読めた！` : "もう一度チャレンジしてみよう！";
+  const name = LS.get("eibunTatamiName") || "（なまえ未入力）";
+  const d = new Date(); const ds = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+  let txt = `【英文たたみ ①役割】\n名前：${name}\n日付：${ds}\n${s.name}\n`;
+  S.runResults.forEach(r => { txt += `・${LV[P[r.pi].stage]}（${P[r.pi].words}語）${starStr(r.stars)}\n`; r.log.forEach(l => txt += `　└ ${l}\n`); });
+  $("copyText").value = txt;
+  window.scrollTo(0,0);
+}
+$("copyBtn").onclick = async () => {
+  const t = $("copyText").value;
+  try { await navigator.clipboard.writeText(t); } catch(e){ $("copyText").select(); document.execCommand("copy"); }
+  $("copyBtn").textContent = "✅ コピーしました";
+  setTimeout(() => $("copyBtn").textContent = "📋 コピーする", 2000);
+};
+$("againBtn").onclick = () => { const s = P[S.pi].series; S.runResults = []; startProblem(P.findIndex(p => p.series === s && p.stage === 0)); };
+$("homeBtn2").onclick = showHome;
+let homeArmed = false;
+$("homeBtn").onclick = () => {
+  const mid = !$("play").classList.contains("hidden") && S.phase !== "meaning";
+  if (mid && !homeArmed){
+    homeArmed = true; $("homeBtn").textContent = "もう一度タップでホーム";
+    setTimeout(() => { homeArmed = false; $("homeBtn").textContent = "🏠 ホーム"; }, 3000);
+    return;
+  }
+  homeArmed = false; $("homeBtn").textContent = "🏠 ホーム"; showHome();
+};
+
+window.__T = { P, S, onTok, pickType, pickChoice };
+showHome();
+</script>
+</body>
+</html>
