@@ -35,6 +35,7 @@ h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 .bubble div{background:#fff;border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:14px;line-height:1.7;box-shadow:0 2px 8px rgba(20,40,70,.07)}
 /* guide */
 .gdots{display:flex;gap:6px;justify-content:center;margin-top:14px}.gdots i{width:28px;height:5px;border-radius:9px;background:#d5dde3}.gdots i.on{background:var(--acc)}
+.gnav{display:flex;gap:8px}.gnav .btn{flex:1}
 .skip{display:block;margin:10px 0 0 auto;background:none;border:0;color:var(--main);font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
 .pos{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:start;padding:11px 0;border-top:1px solid #edf0f3}
 .pos:first-of-type{border-top:0}
@@ -146,6 +147,8 @@ h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 .amean b{color:var(--cn)}
 .shrink{font-size:14px;font-weight:800;color:var(--main);margin-top:8px}
 .shrink b{font-size:22px;color:var(--acc);font-variant-numeric:tabular-nums}
+.orig{background:#f4f6f8;border-radius:10px;padding:8px 11px;margin-top:6px;font-size:13.5px;line-height:1.6;color:#3d4a56;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.orig span{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.14em;color:#fff;background:#8a97a3;border-radius:5px;padding:1px 6px;margin-right:6px;vertical-align:1px}
 .choices{display:grid;gap:9px;margin-top:10px}
 .choices button{border:2px solid #dde3ea;background:#fff;border-radius:12px;padding:12px 13px;font-size:15px;font-weight:700;text-align:left;cursor:pointer;font-family:inherit;color:var(--ink);line-height:1.55}
 .choices button.ok{border-color:var(--ok);background:#e7f6ee}
@@ -195,17 +198,17 @@ const P = [
  { series:0, stage:1, text:"Many tourists visit what is now a museum .", verb:2,
    chunks:[{s:3,e:7,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）"}],
    skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"<b>A ＝ what is now a museum</b>（今は博物館になっている場所）<br>CORE の <b>the museum</b> と同じ位置＝名詞の位置に入っている。",
-   choices:["多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、今の博物館が何であるかを訪ねる。","多くの観光客が、今すぐ博物館を訪れる。","今では多くの観光客が博物館になっている。"],
+   choices:["多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、今の博物館が何であるかを調べに行く。","多くの観光客が、今すぐにでも博物館へ行こうとしている。","今では多くの観光客が、博物館で働くようになっている。"],
    notes:["CORE の the museum（名詞）の位置に、<b>[what is now a museum]</b> が入った。名詞と同じ位置に入るので<b>名詞のカタマリ</b>。","<b>what is now ～</b>＝「今は〜になっているもの・場所」。what is now a museum ＝「今は博物館になっている場所」（もとは城や駅だった、などの含み）。","what を疑問詞の「何」と読むと文意が崩壊する。is はカタマリの中の動詞で、文の V は visit。","頻出形：He was born in what is now Germany.（今のドイツにあたる地域に生まれた）"] },
  { series:0, stage:2, text:"Many tourists from abroad visit what is now a museum .", verb:4,
    chunks:[{s:2,e:3,t:"a",ja:"海外からの",why:"直前の名詞 tourists を修飾"},{s:5,e:9,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）"}],
    skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"<b>A ＝ what is now a museum</b>（今は博物館になっている場所）",
-   choices:["海外からの多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、海外にある博物館を訪れる。","海外の多くの博物館を、観光客が訪れる。","多くの観光客が、今の海外の博物館が何かを訪ねる。"],
+   choices:["海外からの多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、海外にある今は博物館になった場所を訪れる。","海外の多くの博物館を、今は観光客が以前よりもたくさん訪れる。","多くの観光客が海外から来て、今の博物館が何かを調べている。"],
    notes:["(from abroad) は直前の名詞 tourists を後ろから修飾する<b>形容詞のカタマリ</b> →「海外からの観光客」。","名詞の直後の前置詞のカタマリは、まず<b>直前の名詞の修飾</b>を疑うのがセオリー。","骨格は CORE と同じ：Many tourists visit [A]."] },
  { series:0, stage:3, text:"Every summer , many tourists from abroad visit what is now a museum to learn about the history of the town .", verb:7,
    chunks:[{s:0,e:1,t:"d",ja:"毎年夏に",why:"visit の「時」を表す"},{s:5,e:6,t:"a",ja:"海外からの",why:"直前の名詞 tourists を修飾"},{s:8,e:12,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）"},{s:13,e:20,t:"d",ja:"町の歴史を学ぶために",why:"visit の目的（〜するために）を表す"}],
    skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"<b>A ＝ what is now a museum</b>（今は博物館になっている場所）",
-   choices:["毎年夏、海外からの多くの観光客が、町の歴史を学ぶために、今は博物館になっている場所を訪れる。","毎年夏、町の歴史を学べる海外の博物館を、多くの観光客が訪れる。","毎年夏、多くの観光客が海外を訪れ、今は博物館で町の歴史を学んでいる。","毎年夏、海外の多くの観光客は、町の歴史を学ぶことが今の博物館だと知る。"],
+   choices:["毎年夏、海外からの多くの観光客が、町の歴史を学ぶために、今は博物館になっている場所を訪れる。","毎年夏、海外からの多くの観光客が、町の歴史を学んだあとで、今の博物館が何であるかを知りに訪れる。","毎年夏、海外の多くの観光客が、町の歴史を学べる博物館を探して、今は町の中を何度も訪れている。","毎年夏、多くの観光客が海外を訪れ、今は博物館になっている場所で、町の歴史について学んでいる。"],
    notes:["<Every summer> は「時」を表す<b>副詞のカタマリ</b>。","<to learn about … town> は目的（〜するために）を表す<b>副詞のカタマリ</b>（不定詞）。内部の of the town はこのカタマリの中の修飾なので、外側の1つとして括ればよい。","20語でも、骨格は CORE とまったく同じ。長さの正体は、カタマリの量にすぎない。"] },
 
  /* ---------- SERIES 02 ---------- */
@@ -215,17 +218,17 @@ const P = [
  { series:1, stage:1, text:"The money she saved helped her family .", verb:4,
    chunks:[{s:2,e:3,t:"a",ja:"彼女が貯めた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"}],
    skel:[["The money","S"],["helped","V"],["her family","O"]],
-   choices:["彼女が貯めたお金が、家族を助けた。","そのお金が彼女を救い、家族を助けた。","彼女はお金を貯めて、家族を助けた。","彼女の家族が貯めたお金が、役に立った。"],
+   choices:["彼女が貯めたお金が、家族を助けた。","そのお金が彼女を救い、家族も助けた。","彼女が助けた家族が、お金を貯めた。","彼女の家族が貯めたお金が役立った。"],
    notes:["(she saved) は money を後ろから修飾する<b>形容詞のカタマリ</b>。目的格の関係代名詞 that が省略されている。","<b>名詞＋S＋V</b>（money she saved）の並びは、関係代名詞省略のサイン。","saved はカタマリの中の動詞。文の V は helped。saved を「救った」と読んだ時点で構造を見失う。"] },
  { series:1, stage:2, text:"The money she saved from her part-time job helped her family of five .", verb:8,
    chunks:[{s:2,e:7,t:"a",ja:"彼女がアルバイトで貯めた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"},{s:11,e:12,t:"a",ja:"5人の",why:"直前の名詞 family を修飾"}],
    skel:[["The money","S"],["helped","V"],["her family","O"]],
-   choices:["彼女がアルバイトで貯めたお金が、5人家族を助けた。","5人家族がアルバイトで貯めたお金が、彼女を助けた。","そのお金は彼女をアルバイトから救い、5人家族を助けた。","彼女が貯めたお金で、5人がアルバイトを手伝った。"],
+   choices:["彼女がアルバイトで貯めたお金が、5人家族を助けた。","5人家族がアルバイトで貯めたお金が、彼女を助けた。","そのお金は彼女をアルバイトから救い、5人家族を助けた。","彼女が貯めたお金で、5人家族がアルバイトを手伝った。"],
    notes:["(she saved from her part-time job) は money を修飾し、job まで続く。<b>カタマリの終点は、次の動詞 helped の直前</b>。","(of five) は family を修飾 →「5人家族」。","骨格は CORE と同じ：The money helped her family."] },
  { series:1, stage:3, text:"After her father lost his job , the money she had saved from her part-time job helped her family of five for almost a year .", verb:16,
    chunks:[{s:0,e:5,t:"d",ja:"父親が職を失った後",why:"文全体の「時」を表す"},{s:9,e:15,t:"a",ja:"彼女がアルバイトで貯めていた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"},{s:19,e:20,t:"a",ja:"5人の",why:"直前の名詞 family を修飾"},{s:21,e:24,t:"d",ja:"ほぼ1年間",why:"helped の期間を表す"}],
    skel:[["The money","S"],["helped","V"],["her family","O"]],
-   choices:["父親が職を失った後、彼女がアルバイトで貯めていたお金が、5人家族をほぼ1年間支えた。","父親が職を失った後、彼女はアルバイトで貯めたお金を1年で使い切った。","彼女の父親は、彼女がアルバイトで貯めたお金のせいで、ほぼ1年間職を失った。","ほぼ1年間アルバイトをした彼女は、父親の仕事を見つけて5人家族を助けた。"],
+   choices:["父親が職を失った後、彼女がアルバイトで貯めていたお金が、5人家族をほぼ1年間支えた。","父親が職を失った後、彼女はアルバイトで貯めていたお金を、家族のためにほぼ1年で使い切った。","彼女の父親は、彼女がアルバイトで貯めていたお金のせいで、ほぼ1年間も職を失ったままだった。","ほぼ1年間アルバイトをした彼女は、父親の新しい仕事を見つけて、5人家族の生活を支えた。"],
    notes:["<After her father lost his job> は「時」を表す<b>副詞のカタマリ</b>（接続詞 after ＋ S V）。","動詞は lost / had saved / helped の3つ。カタマリの外にあるのは helped のみ → これが文の V。","had saved（過去完了）は、helped より<b>前の時点から</b>貯めていたことを示す。時制は出来事の順序を示すシグナル。","24語が、たたむと CORE と同じ5語の骨格に戻る。"] },
 
  /* ---------- SERIES 03 ---------- */
@@ -235,17 +238,17 @@ const P = [
  { series:2, stage:1, text:"Growing up in Kyoto , he loved old temples .", verb:6,
    chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"}],
    skel:[["He","S"],["loved","V"],["old temples","O"]],
-   choices:["京都で育ったので、彼は古い寺が大好きだった。","京都が大きくなるにつれて、彼は古い寺を愛した。","彼は京都で古い寺を育てるのが好きだった。","京都で育った古い寺を、彼は愛した。"],
+   choices:["京都で育ったので、彼は古い寺が大好きだった。","京都が大きくなるにつれ、彼は古い寺を愛した。","彼は京都で古い寺を育てるのが大好きだった。","京都で育った古い寺を、彼はとても愛していた。"],
    notes:["<Growing up in Kyoto> は文全体を修飾する<b>副詞のカタマリ</b>（分詞構文）。","意味上の主語は、文の主語 he と一致する（育ったのは彼）。","「〜する中で／〜なので」と読む。"] },
  { series:2, stage:2, text:"Growing up in Kyoto , he loved old temples built hundreds of years ago .", verb:6,
    chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"},{s:9,e:13,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"}],
    skel:[["He","S"],["loved","V"],["old temples","O"]],
-   choices:["京都で育った彼は、数百年前に建てられた古い寺が大好きだった。","京都で育った彼は、数百年前に古い寺を建てるのが好きだった。","京都で育った彼は古い寺が好きで、数百年前にそれを建てた。","数百年前に京都で育った彼は、古い寺を愛した。"],
+   choices:["京都で育った彼は、数百年前に建てられた古い寺が大好きだった。","京都で育った彼は、数百年前に古い寺を建てるのが大好きだった。","京都で育った彼は古い寺が好きで、数百年前にその寺を建てた。","数百年前に京都で育った彼は、古い寺をとても大切にしていた。"],
    notes:["built は過去形ではなく<b>過去分詞</b>。(built hundreds of years ago) は temples を後ろから修飾する<b>形容詞のカタマリ</b> →「数百年前に建てられた寺」。","<b>名詞＋過去分詞</b>は、まず「〜された名詞」と読む。built を V と取ると「寺が建てた」という破綻した文になる。"] },
  { series:2, stage:3, text:"Growing up in Kyoto , the boy who later became a famous architect loved old temples built hundreds of years ago because each one had its own story .", verb:13,
    chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"},{s:7,e:12,t:"a",ja:"後に有名な建築家となった",why:"直前の名詞 boy を修飾"},{s:16,e:20,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"},{s:21,e:27,t:"d",ja:"一つ一つに固有の物語があったので",why:"loved の理由を表す"}],
    skel:[["The boy","S"],["loved","V"],["old temples","O"]],
-   choices:["京都で育ち、後に有名な建築家となったその少年は、一つ一つに固有の物語があるという理由で、数百年前に建てられた古い寺を愛した。","京都で育ったその少年は、有名な建築家が数百年前に建てた古い寺が好きだった。","その少年は、古い寺に物語があったので、後に京都で有名な建築家になった。","京都で育った有名な建築家は、その少年に古い寺の物語を話した。"],
+   choices:["京都で育ち、後に有名な建築家となった少年は、一つ一つに物語があるので、数百年前に建てられた古い寺を愛した。","京都で育った少年は、有名な建築家が数百年前に建てた古い寺に、一つ一つ物語があると知って、それを愛した。","京都で育った少年は、数百年前に建てられた古い寺に物語があったので、のちに京都で有名な建築家になった。","京都で育ち、後に有名な建築家となった男性は、数百年前に建てられた古い寺の物語を、幼いその少年に話した。"],
    notes:["(who later became a famous architect) は boy を修飾する<b>形容詞のカタマリ</b>（関係代名詞）。<b>主語 the boy と動詞 loved の間に割り込む</b>構造に注意。","動詞の候補は became / loved / built / had の4つ。カタマリの外にあるのは loved のみ。","<because each one had its own story> は理由を表す<b>副詞のカタマリ</b>。","27語が、たたむと CORE と同じ骨格に。ここまで読めれば、英検2級の長文の1文は怖くない。"] }
 ];
 P.forEach(p => { p.tokens = p.text.split(" "); p.words = p.tokens.filter(t => !/^[.,]$/.test(t)).length; });
@@ -334,13 +337,14 @@ const GUIDE = [
 function guide(k){
   S.inRun = false; setPts(); $("#hm").classList.add("hide");
   const last = k === GUIDE.length - 1;
-  app.innerHTML = `<div class="pop">${k === 0 ? `<button class="skip" id="skip">SKIP ▶ 本編へ</button>` : ""}${GUIDE[k]()}
+  app.innerHTML = `<div class="pop"><button class="skip" id="skip">SKIP ▶ 本編へ</button>${GUIDE[k]()}
     <div class="gdots">${GUIDE.map((_,i) => `<i class="${i === k ? "on" : ""}"></i>`).join("")}</div>
     <button class="btn main" id="gnext">${last ? "本編スタート ▶" : "NEXT ▶"}</button>
-    ${k > 0 ? `<button class="btn sub" id="gback">◀ BACK</button>` : ""}</div>`;
+    <div class="gnav">${k > 0 ? `<button class="btn sub" id="gback">◀ BACK</button>` : ""}${last ? "" : `<button class="btn sub" id="gskip">SKIP ▶</button>`}</div></div>`;
   $("#gnext").onclick = () => last ? (save.guided = 1, persist(), home()) : guide(k + 1);
   if ($("#gback")) $("#gback").onclick = () => guide(k - 1);
-  if ($("#skip")) $("#skip").onclick = () => { save.guided = 1; persist(); home(); };
+  const skip = () => { save.guided = 1; persist(); home(); };
+  $("#skip").onclick = skip; if ($("#gskip")) $("#gskip").onclick = skip;
   scrollTo(0,0);
 }
 
@@ -541,6 +545,7 @@ function fold(){
       <div class="sec">PARTS ── カタマリの役割</div>
       <div class="parts">${parts.map(c => partHtml(p,c)).join("")}</div>
       <div class="sec">04 MEANING</div><div class="inst">骨格＋カタマリから、元の英文の意味を選べ</div>
+      <div class="orig"><span>ORIGINAL</span>${esc(p.text.replace(/ ([.,])/g, "$1"))}</div>
       <div class="choices" id="choices">${shuffle([0,1,2,3]).map(k => `<button data-k="${k}">${esc(p.choices[k])}</button>`).join("")}</div>
       <div id="exp"></div>`;
     document.querySelectorAll("#choices button").forEach(b => b.onclick = () => choose(+b.dataset.k));
