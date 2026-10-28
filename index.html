@@ -3,503 +3,466 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>英文たたみ ① 役割（試作）</title>
+<meta name="theme-color" content="#0e6f78">
+<title>読める英文 英検2級｜Q-UP英語塾</title>
 <style>
-  :root { --n:#2fbdea; --a:#8dc63f; --d:#e0b400; --nBg:rgba(47,189,234,.16); --aBg:rgba(141,198,63,.20); --dBg:rgba(247,208,0,.25); --ink:#1f2933; --sub:#616e7c; }
-  * { box-sizing:border-box; }
-  body { margin:0; font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif; color:var(--ink); background:#f3f6f9; }
-  header { background:linear-gradient(90deg,#2fbdea,#8dc63f); color:#fff; padding:10px 14px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:5; }
-  header .ttl { font-weight:800; font-size:17px; flex:1; }
-  header button { background:rgba(255,255,255,.25); color:#fff; border:1px solid rgba(255,255,255,.6); border-radius:16px; padding:5px 12px; font-size:14px; cursor:pointer; }
-  main { max-width:760px; margin:0 auto; padding:14px; }
-  .card { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,.08); padding:14px 16px; margin-bottom:12px; }
-  h2 { font-size:17px; margin:0 0 8px; }
-  .muted { color:var(--sub); font-size:13px; }
-  .btn { display:inline-block; border:none; border-radius:10px; padding:10px 16px; font-size:16px; font-weight:700; cursor:pointer; background:#2fbdea; color:#fff; }
-  .btn.sub { background:#e4e7eb; color:var(--ink); }
-  .btn.green { background:#5fa82a; }
-  .btn:disabled { opacity:.4; cursor:default; }
-  input[type=text] { font-size:16px; padding:8px 10px; border:1px solid #cbd2d9; border-radius:8px; width:180px; }
-
-  /* 記号 */
-  .sym-n { color:var(--n); font-weight:800; } .sym-a { color:#5fa82a; font-weight:800; } .sym-d { color:#c79a00; font-weight:800; }
-  .rule { display:grid; grid-template-columns:auto 1fr; gap:4px 10px; font-size:14px; align-items:baseline; }
-  .rule .k { font-size:18px; }
-
-  /* シリーズ */
-  .series { border:2px solid #e4e7eb; border-radius:12px; padding:10px 12px; margin:8px 0; }
-  .series .st { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-  .pill { border:1.5px solid #cbd2d9; background:#fff; border-radius:20px; padding:6px 12px; font-size:14px; cursor:pointer; }
-  .pill .stars { color:#f0a500; margin-left:4px; }
-  .best { font-size:15px; font-weight:800; color:#2b7a0b; }
-
-  /* プレイ */
-  .stagebar { display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:8px; flex-wrap:wrap; }
-  .stagebar .lv { font-weight:800; font-size:16px; }
-  .dots span { display:inline-block; width:10px; height:10px; border-radius:50%; background:#d9e2ec; margin-right:4px; }
-  .dots span.on { background:#2fbdea; } .dots span.done { background:#8dc63f; }
-  .steps { display:flex; gap:4px; margin:6px 0 10px; }
-  .steps div { flex:1; text-align:center; font-size:12px; padding:5px 2px; border-radius:6px; background:#eef2f6; color:#7b8794; }
-  .steps div.on { background:#2fbdea; color:#fff; font-weight:800; }
-  .steps div.ok { background:#d3f9d8; color:#2b7a0b; }
-  .inst { font-size:16px; font-weight:700; margin-bottom:8px; }
-  .sentence { font-size:22px; line-height:2.5; padding:8px 4px; word-break:normal; }
-  .tok { display:inline-block; padding:0 5px; margin:0 1px; border-radius:6px; cursor:pointer; position:relative; transition:background .15s; user-select:none; }
-  .tok:hover { background:#eef2f6; }
-  .tok.punct { cursor:default; padding:0 1px; margin-left:-2px; }
-  .tok.punct:hover { background:none; }
-  .tok.sel { background:#ffe08a !important; }
-  .tok.isV { color:#d6336c; font-weight:800; }
-  .tok.isV::after { content:"V"; position:absolute; left:50%; transform:translateX(-50%); top:-15px; font-size:12px; color:#d6336c; font-weight:800; line-height:1; }
-  .tok.flash { animation:flash 1s ease 2; }
-  @keyframes flash { 0%,100%{background:transparent;} 50%{background:#ffd43b;} }
-  .seg { transition:opacity .6s; }
-  .seg.f-n { background:var(--nBg); border-radius:6px; }
-  .seg.f-a { background:var(--aBg); border-radius:6px; }
-  .seg.f-d { background:var(--dBg); border-radius:6px; }
-  .br { font-weight:800; font-size:24px; padding:0 1px; }
-  .br.n { color:var(--n); } .br.a { color:#5fa82a; } .br.d { color:#c79a00; }
-  .seg.fading { opacity:0; }
-  .chipA { display:inline-block; background:var(--n); color:#fff; border-radius:8px; padding:0 10px; font-weight:800; }
-  .typebtns { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
-  .typebtns button { flex:1; min-width:120px; border-radius:10px; padding:10px 6px; font-size:16px; font-weight:800; cursor:pointer; background:#fff; }
-  .tb-n { border:2px solid var(--n); color:#0b7fa8; } .tb-a { border:2px solid var(--a); color:#3f7d12; } .tb-d { border:2px solid #e0b400; color:#9a7400; }
-  .tools { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-  .fb { margin-top:10px; padding:10px 12px; border-radius:10px; font-size:15px; line-height:1.6; display:none; }
-  .fb.ok { background:#ebfbee; border:1px solid #8ce99a; display:block; }
-  .fb.ng { background:#fff5f5; border:1px solid #ffa8a8; display:block; }
-  .fb.info { background:#f1f8fd; border:1px solid #a5d8ff; display:block; }
-  .found-list { font-size:14px; margin-top:8px; }
-  .found-list div { margin:3px 0; }
-  .skel { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin:10px 0; }
-  .skel .part { text-align:center; }
-  .skel .w { font-size:22px; font-weight:800; padding:4px 10px; border-radius:8px; background:#f1f3f5; }
-  .skel .r { font-size:13px; font-weight:800; color:#7b8794; margin-top:2px; }
-  .choices button { display:block; width:100%; text-align:left; margin:6px 0; padding:10px 12px; font-size:15px; line-height:1.5; border-radius:10px; border:1.5px solid #cbd2d9; background:#fff; cursor:pointer; }
-  .choices button.right { border-color:#2f9e44; background:#ebfbee; }
-  .choices button.wrong { border-color:#e03131; background:#fff5f5; }
-  .choices button:disabled { cursor:default; color:var(--ink); }
-  .notes li { margin:4px 0; line-height:1.6; }
-  .res-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eef2f6; font-size:15px; }
-  .res-row .stars { color:#f0a500; font-size:18px; }
-  textarea { width:100%; font-size:13px; height:170px; border-radius:8px; border:1px solid #cbd2d9; padding:8px; }
-  .hidden { display:none !important; }
+:root{--main:#0e6f78;--main2:#17939e;--deep:#0a4a51;--soft:#e6f5f5;--acc:#ff6b57;--acc2:#ffe0db;--ink:#22303c;--bg:#f2f6f7;--ok:#1f9d55;--ng:#d64545;--gold:#d4a017;
+  --cn:#228be6;--cnBg:rgba(34,139,230,.14);--ca:#2b9a66;--caBg:rgba(43,154,102,.16);--cd:#9c36b5;--cdBg:rgba(156,54,181,.13)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;word-break:auto-phrase;line-break:strict}
+.wrap{max-width:600px;margin:0 auto;padding:0 14px 40px}
+header{background:linear-gradient(110deg,var(--deep),var(--main) 60%,var(--main2));color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+header img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--acc)}
+header>div{min-width:0}header .t1{font-size:11px;opacity:.85;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .t2{font-weight:900;font-size:17px;letter-spacing:.02em}
+header .t2 span{color:var(--acc)}
+header .pt{white-space:nowrap;margin-left:auto;background:rgba(255,255,255,.16);padding:4px 11px;border-radius:99px;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums}
+header .hm{white-space:nowrap;background:none;border:1.5px solid rgba(255,255,255,.55);color:#fff;border-radius:99px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.card{background:#fff;border-radius:16px;padding:18px;margin-top:14px;box-shadow:0 2px 10px rgba(20,40,70,.07)}
+h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
+.muted{color:#6b7885;font-size:13px}
+.hero{background:linear-gradient(135deg,var(--deep),var(--main) 55%,#138a93);color:#fff;border-radius:18px;padding:22px 18px 18px;margin-top:14px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;border-radius:50%;background:rgba(255,107,87,.22)}
+.hero .en{font-size:12px;font-weight:800;letter-spacing:.22em;color:#ffd1c9}
+.hero .jp{font-size:26px;font-weight:900;margin:6px 0 6px;line-height:1.35}
+.hero .jp span{color:var(--acc)}
+.hero .sub{font-size:13px;opacity:.9;line-height:1.7}
+.hero .stat{display:inline-block;margin-top:12px;background:rgba(255,255,255,.14);border-radius:99px;padding:5px 12px;font-size:13px;font-weight:800}
+.bubble{display:flex;gap:10px;align-items:flex-start;margin-top:14px}
+.bubble img{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.bubble div{background:#fff;border-radius:4px 16px 16px 16px;padding:10px 13px;font-size:14px;line-height:1.7;box-shadow:0 2px 8px rgba(20,40,70,.07)}
+.rule{display:grid;grid-template-columns:44px 1fr;gap:8px 8px;font-size:14px;align-items:center}
+.rule .k{font-size:20px;font-weight:900;text-align:center;border-radius:10px;padding:2px 0}
+.kn{color:var(--cn);background:var(--cnBg)}.ka{color:var(--ca);background:var(--caBg)}.kd{color:var(--cd);background:var(--cdBg)}
+.flow{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.flow span{font-size:12px;font-weight:800;background:var(--soft);color:var(--main);border-radius:99px;padding:4px 10px}
+.series{border-radius:14px;padding:14px;margin-top:12px;background:#fff;box-shadow:0 2px 10px rgba(20,40,70,.07);border-left:6px solid var(--main)}
+.series .no{font-size:11px;font-weight:900;letter-spacing:.18em;color:var(--acc)}
+.series .nm{font-size:16px;font-weight:900;color:var(--main);margin:2px 0}
+.series .fc{font-size:13px;color:#6b7885;font-family:system-ui,sans-serif}
+.lvs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.lv{border:2px solid #dde3ea;background:#fff;border-radius:12px;padding:9px 4px;cursor:pointer;text-align:center;font-family:inherit;color:var(--ink)}
+.lv b{display:block;font-size:13px;letter-spacing:.08em;color:var(--main)}
+.lv small{display:block;font-size:11px;color:#6b7885;margin-top:1px}
+.lv .rk{display:inline-block;margin-top:4px;font-size:12px;font-weight:900;border-radius:6px;padding:0 7px;color:#fff;background:#c3ccd5}
+.rk.S{background:linear-gradient(135deg,#d4a017,#f5c542)}.rk.A{background:var(--acc)}.rk.B{background:var(--main2)}
+.lv:active{transform:scale(.97)}
+/* play */
+.top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:900;letter-spacing:.14em;color:#fff;background:var(--acc);border-radius:6px;padding:3px 9px}
+.badge.BASIC{background:var(--main2)}.badge.MEDIUM{background:var(--main)}.badge.ADVANCED{background:linear-gradient(135deg,var(--deep),#3b2a7a)}
+.wc{font-size:13px;font-weight:800;color:#6b7885}
+.sname{font-size:12px;color:#6b7885;margin-left:auto}
+.prog{display:flex;gap:4px;margin-top:10px}.prog i{flex:1;height:6px;border-radius:9px;background:#dfe5ec}.prog i.d{background:var(--main2)}.prog i.c{background:var(--acc)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:12px 0 10px}
+.steps div{text-align:center;font-size:10.5px;font-weight:800;letter-spacing:.06em;padding:6px 2px;border-radius:8px;background:#eef2f4;color:#98a4ae;line-height:1.3}
+.steps div small{display:block;font-size:10px;font-weight:600;letter-spacing:0}
+.steps div.on{background:var(--main);color:#fff}
+.steps div.ok{background:var(--soft);color:var(--main)}
+.inst{font-size:15px;font-weight:800;color:var(--main);margin:2px 0 4px;line-height:1.5}
+.inst .rem{background:var(--acc);color:#fff;border-radius:99px;padding:1px 9px;font-size:12px;margin-left:4px}
+.sentence{font-size:20px;line-height:2.45;padding:10px 2px 4px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.tok{display:inline-block;padding:0 5px;margin:0 1px;border-radius:7px;cursor:pointer;position:relative;transition:background .15s,color .15s;user-select:none;-webkit-user-select:none}
+.tok:active{background:#e3eaee}
+.tok.punct{cursor:default;padding:0 1px}
+.tok.sel{background:#ffd8a8!important}
+.tok.isV{color:var(--acc);font-weight:900}
+.tok.isV:after{content:"V";position:absolute;left:50%;transform:translateX(-50%);top:-13px;font-size:11px;font-weight:900;color:#fff;background:var(--acc);border-radius:4px;padding:0 4px;line-height:1.35}
+.tok.flash{animation:flash 1s ease 2}@keyframes flash{50%{background:#ffe066}}
+.seg{transition:opacity .55s,filter .55s}
+.seg.f-n{background:var(--cnBg);border-radius:7px}.seg.f-a{background:var(--caBg);border-radius:7px}.seg.f-d{background:var(--cdBg);border-radius:7px}
+.br{font-weight:900;font-size:24px;padding:0 1px}
+.br.n{color:var(--cn)}.br.a{color:var(--ca)}.br.d{color:var(--cd)}
+.seg.fading{opacity:0;filter:blur(3px)}
+.chipA{display:inline-block;background:var(--cn);color:#fff;border-radius:8px;padding:0 12px;font-weight:900;animation:pop .35s}
+.typebtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.typebtns button{border-radius:12px;padding:10px 4px;font-size:15px;font-weight:900;cursor:pointer;background:#fff;font-family:inherit}
+.typebtns button small{display:block;font-size:11px;font-weight:700}
+.tb-n{border:2px solid var(--cn);color:var(--cn)}.tb-a{border:2px solid var(--ca);color:var(--ca)}.tb-d{border:2px solid var(--cd);color:var(--cd)}
+.tools{display:flex;gap:8px;margin-top:12px}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:900;cursor:pointer;font-family:inherit;letter-spacing:.04em}
+.btn.main{background:var(--acc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.btn.main:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.btn.sub{background:var(--soft);color:var(--main)}
+.btn.fold{background:linear-gradient(135deg,var(--deep),var(--main2));color:#fff;font-size:20px;letter-spacing:.2em;box-shadow:0 5px 0 rgba(0,0,0,.2);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(1.03)}}
+.fb{border-radius:12px;padding:11px 13px;margin-top:12px;font-size:14px;line-height:1.7;display:none}
+.fb.ok{background:#e7f6ee;display:block}.fb.ng{background:#fdecec;display:block}.fb.info{background:var(--soft);display:block}
+.fb .h{font-weight:900;letter-spacing:.08em;margin-right:6px}
+.fb.ok .h{color:var(--ok)}.fb.ng .h{color:var(--ng)}.fb.info .h{color:var(--main)}
+.found{margin-top:10px;font-size:13px;line-height:1.6;font-family:system-ui,sans-serif}
+.found div{padding:4px 0;border-top:1px dashed #e3e8ec}
+.found b.n{color:var(--cn)}.found b.a{color:var(--ca)}.found b.d{color:var(--cd)}
+.found span{font-family:"Hiragino Sans","Noto Sans JP",sans-serif;color:#6b7885}
+.skel{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin:10px 0 4px}
+.skel .p{text-align:center;animation:pop .4s both}
+.skel .w{font-size:22px;font-weight:900;padding:4px 12px;border-radius:10px;background:var(--soft);color:var(--main);font-family:system-ui,sans-serif}
+.skel .w.v{background:var(--acc2);color:var(--acc)}
+.skel .r{font-size:11px;font-weight:900;color:#98a4ae;margin-top:3px;letter-spacing:.1em}
+.shrink{font-size:14px;font-weight:800;color:var(--main);margin-top:6px}
+.shrink b{font-size:22px;color:var(--acc);font-variant-numeric:tabular-nums}
+.choices{display:grid;gap:9px;margin-top:10px}
+.choices button{border:2px solid #dde3ea;background:#fff;border-radius:12px;padding:12px 13px;font-size:15px;font-weight:700;text-align:left;cursor:pointer;font-family:inherit;color:var(--ink);line-height:1.55}
+.choices button.ok{border-color:var(--ok);background:#e7f6ee}
+.choices button.ng{border-color:var(--ng);background:#fdecec}
+.choices button:disabled{cursor:default;color:var(--ink)}
+.notes{margin:6px 0 0;padding-left:18px}.notes li{margin:5px 0;line-height:1.7;font-size:14px}
+.sec{font-size:12px;font-weight:900;letter-spacing:.16em;color:var(--acc);margin-top:16px}
+.toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);font-size:34px;font-weight:900;letter-spacing:.06em;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18);pointer-events:none;z-index:30;opacity:0;white-space:nowrap}
+.toast.go{animation:toast .9s ease-out}
+.toast small{display:block;font-size:15px;text-align:center;letter-spacing:.12em}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,-30%) scale(.7)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-80%) scale(1)}}
+.score{text-align:center;font-size:52px;font-weight:900;color:var(--main);margin:2px 0;font-variant-numeric:tabular-nums}
+.score small{font-size:18px}
+.rrow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid #edf0f3;font-size:14px}
+.rrow .rk{font-size:16px;padding:1px 10px;border-radius:8px;color:#fff;font-weight:900}
+.maxlen{text-align:center;margin-top:8px;font-weight:900;color:var(--acc);font-size:16px;letter-spacing:.04em}
+footer{font-size:11px;color:#8a949e;line-height:1.6;margin-top:24px;text-align:center}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:20}
+.hide{display:none!important}
+.pop{animation:pop .35s}@keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
-<header>
-  <div class="ttl">英文たたみ ① 役割 <span style="font-size:12px;font-weight:400">（試作）</span></div>
-  <button id="homeBtn" class="hidden">🏠 ホーム</button>
-</header>
-
-<main>
-  <!-- ===== ホーム ===== -->
-  <section id="home">
-    <div class="card">
-      <h2>長い文も、たためば短い文</h2>
-      <p class="muted" style="margin:0 0 8px">長い文がむずかしいのは、カタマリ（修飾語）がたくさんくっついているから。カタマリをくくって「たたむ」と、短い文と同じ骨組みが見えてきます。</p>
-      <div class="rule">
-        <span class="k sym-n">[ ]</span><span><b>名詞</b>のカタマリ … 主語・目的語・補語になる（例：[what is now a museum]）</span>
-        <span class="k sym-a">( )</span><span><b>形容詞</b>のカタマリ … 前の<b>名詞</b>を説明する（例：the money (she saved)）</span>
-        <span class="k sym-d">&lt; &gt;</span><span><b>副詞</b>のカタマリ … 動詞や文全体を説明する（いつ・なぜ・何のため）</span>
-      </div>
-      <p class="muted" style="margin:10px 0 0">すすめ方：① 文の動詞（V）を見つける → ② カタマリをくくる → ③ たたむ → ④ 意味をつかむ</p>
-    </div>
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <label>なまえ：<input type="text" id="nameIn" placeholder="例：姫野"></label>
-        <span class="best" id="bestLen"></span>
-      </div>
-    </div>
-    <div class="card" id="seriesList"></div>
-  </section>
-
-  <!-- ===== プレイ ===== -->
-  <section id="play" class="hidden">
-    <div class="card">
-      <div class="stagebar">
-        <span id="seriesName" style="font-weight:700"></span>
-        <span class="dots" id="dots"></span>
-        <span class="lv" id="lvName"></span>
-      </div>
-      <div class="steps" id="steps">
-        <div>① Vを見つける</div><div>② カタマリをくくる</div><div>③ たたむ</div><div>④ 意味</div>
-      </div>
-      <div class="inst" id="inst"></div>
-      <div class="sentence" id="sentence"></div>
-      <div class="typebtns hidden" id="typeBtns">
-        <button class="tb-n" data-t="n">[ ] 名詞</button>
-        <button class="tb-a" data-t="a">( ) 形容詞</button>
-        <button class="tb-d" data-t="d">&lt; &gt; 副詞</button>
-      </div>
-      <div class="tools">
-        <button class="btn sub" id="hintBtn">💡 ヒント</button>
-        <button class="btn sub hidden" id="clearBtn">選びなおす</button>
-        <button class="btn green hidden" id="foldBtn">たたむ！</button>
-      </div>
-      <div class="fb" id="fb"></div>
-      <div class="found-list" id="foundList"></div>
-      <div id="skelArea" class="hidden">
-        <div class="inst" style="margin-top:12px">骨組み</div>
-        <div class="skel" id="skel"></div>
-        <div class="muted" id="skelA"></div>
-      </div>
-      <div id="choiceArea" class="hidden">
-        <div class="inst" style="margin-top:12px">④ もとの長い文の意味は？</div>
-        <div class="choices" id="choices"></div>
-      </div>
-      <div id="explainArea" class="hidden">
-        <div class="inst" style="margin-top:12px">かいせつ</div>
-        <ul class="notes" id="notes"></ul>
-        <div style="text-align:right"><button class="btn" id="nextBtn">次へ ▶</button></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 結果 ===== -->
-  <section id="result" class="hidden">
-    <div class="card">
-      <h2 id="resTitle"></h2>
-      <div id="resRows"></div>
-      <p class="best" id="resMsg" style="margin-top:10px"></p>
-    </div>
-    <div class="card">
-      <h2>先生に送る</h2>
-      <p class="muted">下のボタンでコピーして、LINEやメールに貼り付けて送ってね。</p>
-      <textarea id="copyText" readonly></textarea>
-      <div class="tools">
-        <button class="btn" id="copyBtn">📋 コピーする</button>
-        <button class="btn sub" id="againBtn">もう一度</button>
-        <button class="btn sub" id="homeBtn2">ホームへ</button>
-      </div>
-    </div>
-  </section>
-</main>
-
+<header><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAAQABAAD//gAQTGF2YzYxLjE5LjEwMQD/2wBDAAgICAkICQsLCwsLCw0MDQ0NDQ0NDQ0NDQ0ODg4REREODg4NDQ4OEBARERITEhERERETExQUFBgYFxccHB0iIin/xACcAAADAAMBAQEAAAAAAAAAAAAEBQYDAgcBAAgBAAMBAQEAAAAAAAAAAAAAAAIBAwAEBRAAAQMCAwQGBggHAQADAQAAAQADAgQRIQUSUWExQXGBsZEiExQjBsGh0RUy4VIzYvBCwpLxggdyc6LSJENTEQACAgEDAgcAAQQDAQAAAAAAAQIRAyESMVFBcRMUMmEiBIGhQlKxMyPBkf/AABEIAKAAoAMBEgACEgADEgD/2gAMAwEAAhEDEQA/AJaNILcE6DWC4BHYYTejDYnPlJiMYWRp9ycQawWMYwq8jHgm3l8UjBGACxgmhhgkYYheafwhNNHhWGMQDGnwCZwhwSGMyM+WRDXmXwwQLz5gDGHWUEkEFERnzGpbeZLWGm+JJsOpTta07KJmBIj705aR1AY9i0Y0EmaTBZqc0FGPLaMbDlifcpmQu5jYkHlf5lVToEm0MrG8xlmBEXMNH6ssFHTmDUZRsJT58x0KscrgQsm4KRejFVt6OBGHC6x1sNI/EN0TbbsGwe1DoVGpnB6LkvERzKXuuGBtIXvz5/Iq0MkoOyaJSgpIId1tXGsEZDAjTh0FIQ4RiDcL0fUqWKS+Dz0zh8jbki/k7Wdty2RnOlGHAdimfZTOovPsMPSAIwgTz3dO5ebhX/edPlbcqkjsy/8ACQeS8biyk9rdUsrqN2C+9rfDlT28rsfKM+Ucy4Zlwzl+fUzLVDGQh4i3E33rH7Q1bUqSEIyJPlxG7BDGTc6HCD3tmaW00pLaI8pceabMo4w534BZcuBGXuq7SGwItoSHDblW43F0aRDVEEbr2QlKxMsNz1S0+Y2LcvrhQ3Ruiu1PUs1KrJOT4Ow/QtAKKU9HiDWq9+dk0eMRl7w5hj+FDSoLsHuYBFxjgks80kYExIjp4g81xhUdRHfY6MbJEc7blpEcb4W3oTIqS8yx/EINiqi5EXwJ5LDLAphYWMSsetCMNCCSvOKQghGaEDKwGKY0rOmMZXsZYR7sT1DHuTExjQK5Dy4W24G3YEVUyjTtSelEEYRah9+RwiNojzPM8ErEEkMROtEWMrDZf+EcSdp4BP6DIZun0mslKcjjGHCMR/qMMOWxazU2KiipeJNSgKgWi047vkPD3fJdCNNCAsIgW3LXQnEWxsomcy+gpatWjTuxK6E43EckW8nQHlFkyMco5xaEYYEC19yqJtiyPeTJ+WVOZ1bDoPrG5TGOMTiO9W77EJXwCummRRyyg0dRyx9gC9ryGwjFVtfl8ZAkCy6ETjJnA0dU4IgjDy8RiD+rFF1MfKlpIV7sFHFVBSVGJpzQRKJtYg3HK3MLB+HIH9pTNyCY6TU52M1yCUJy9c2RFwbdkx09qh6Vzy5GN8JDvj9iotWiaZNqrKNH2etCFDTm/Hcvs9dk5TsNmNox4ELpXuEl3IP2ozd6dDFQgfRk8cVX0GR05ysz0n8O999kbOOWadgo71ghX8E9RCRpWMTbz2xbkfGFlo9MWaeF8fSW8P7wutcGXtOB8jl7jtFTG1DU/wDD+FbVhIy+r3M/wrdhdjdzM4I9Qzizdx6RItw4JxX01UzSSZ8oicsCSFC9WZRcWQUzKDsnYQAeiTPAcN6EhS1LMvWQlEDgShtUHOqLRpsKMepXMuwibxJvzxSamlbmpWgaouqNFFYzUmUkDSyuQmzBGKqnBdcjCPGRAR+QwGpx+XBmBl1pGMOhrPQHpRBtFmPlk8hYanD2DqSOmflUU8QPrVM5SlL8ms9vDqQXqCGuAyly2j+kqiLzg9WzjCJ+8eH8sbdZKp6FgU9PGIHK56SqRW9/BWCqILexfLJzds2ciIjBeOYrNUZji2xxBHALL5xAMNDQofwWKqONlKSNIrEcQRyWC1nDw3QDDML3JL52KEYzCuoIK0fimjImxyJjMqUOwJAxTF4YFVTBOecbDZDg2JhL9b0TmjJbcDkR0jkVYUH2OTgpkXcFE/KlG/7T3wl8lgdOpskcge4/JOrCjoyYnwM8wkZswvjpJWpu/SjbJsHrCODtUBF1ICarUNq4j9nOqiOWGINhoslQAGTy2qnkov2B9RIge0DYk/RSPEvt9qy5YLv5f/2a7VL4G+QudRrg7lmmGVVX/I9ix5wbZTV/8j2LDBYTEmYQEgbwCyV0xoKi2Jjigoo53m9rEWsseayMjIWQMyKLgfBOMn1ll8xCXnfVl3FAzSGjIpqNvEJhl1PJwxiAcSBwWEEYqXz9Hez70hhJxuU9+ItEdyE9s3vLystR5gRHQBZC3rQl714jXUKvq/AXey7/AKXKijyBhD+UW/8AlLpQ3+O2y/Vsj9tNGRP+0r2+adUyslc7EmThojtlTVQpG+BnLlGPH7EvzOrZoGpuzlYkgX4mRPCMRz3AI+ETnKuBVuZbHHdzwIKr2nFO5adO4B0H4E4KWzH2jpyJSJiY8LkmUb3tYyjGUL7tSzYGyb1Go6B+bjjoUkPaOlqzaJlCWyQUdRVlJUyB0Rid1vgR/VaUgGmgoxTCi09UWbjurxL2NIfIMxiLYJWIJIe7UDdqLx2WUtmtWWbw4XWMjcGk6DazOKamuJHUdkcVHxaaemTO8jxIBFoj80pERHeiSCVgynRN13Gf0+y6cGp2+KHFZQ08vLEYYcdMoS7Dj1J7R7ZC3iUoBEqlqoB03B2HAod4sVABhbcY4EFKqEbdZmLsyb1NHcs1WDJqQPGyJOmICStDfBGGejXE7/ihqg47wumrphw4OS6BkUFDImmb3XihcrnenkOYldQnpILKvsVjrEWP2jGqc00Jb3qgZyJ7NaIShOERInqIPArqi7ijlWdQVUc8tGdDwuWopyjUa/L48vNbVhR5DU00qPVJsimc14DE7l0M5n+hHOmdHp31L/PBpyir/wCZ7EJmL8ayjep43iXY2ueS6Dm89ELOjyGaH0dzYVHtwdv9eXevPf6l/kA8cOh3r8z6Fd8upXeiUcuLcD3KcEXR++Xel6uPVgPHDoB6aXRFt8upR+i0jZwab7gpZ2rbakIyfIJ3ovVQ6sDyl/iS9PLoivmV3LKnDJJ0wAsONkJkfrWZu6jISkRHoiMV048qnxZsUElwc08ThzRs07dWR3ts4baOUQO83Q3tXLznp/raqx96Bi/sSftDa+o0/wAWN+rqHTxMiOxaf4weMah9gDwyaLg/tmB711zf2Au5nPFfUpVQOkZvl9JXafSW/OjAmQicY32kc01qYA8Upc2HKI4JtULHI5VmeVZdMaA1LTG+mAjLTHcI2sMRdV9RGLcsBc3QLNJE2qKPBF8l09yIbK8lHnRlFlwRBxudII/MDe+7mujUQhKViQTzGxOUmxRasmoqKpGmmjwgM0enkQB8FkzMgMkDki7CmatTYvk5JnLUn6nSPvDuR1Xpi54uJPHYFo0gTT1DfIExQUzQkHJSmJAi044RvxIt+7fxVPSBp1uPCQ5FWUq7ESDhu7nRREuZPQeMierUTI+K5MjxJvzXQZMNQFxCAO0RC6HlOc41+dI7aOc0+XTp76ZTMD98n4c7dKp60XKrKe4mjmWPb3LSJx8Wgb24Fe1h0QkdyLubuQaHI55VD1sukrV6V5yvtK7sfBo8I4Jcs0uWMMqOEhtWPLcJH9c1PNybKFi4NjKxnOavLmfLaPhMieg294Qcoa49x61z7bCRbdQmFS9qMyP7/gl0mTsS2IOh72TDT7RZkf8A9D3ITycEGxB0U3smdQg1iimrXXnsTPTRkL8wMmmQIfXngF2PJWqOeXtaINzw9ZeIJ189V/huSWrPS/LHFLHwm+98jeiPK/RLIsjttdOlH57r8ti23EzuXDEm/wDaV3HOfZGhzEFxoeQ7EEi34csOBjy6QoqG1WVz/m0coNquz4OiU9zOfF+hxdSVr+pH5AyKXJmBws1fH88ifjgm86YUmXNN8JQbhGQ/MIi/xXO5cnPCW5M6UuCnc5Rnx1uubj2XWLOpWNRI8oxA67j3qsORw5CfApMb/wCLyPPq5XxF422DAoD2AqIMPsNwjadRUVEXp8SYinuzEbBqEzvK6ZaSXgLI9a+CS1g18gw/9Oy19RYceCm81qJhh4i5LcrHr4FLJI53IriiXxrUSZnm0oz0QxkTYdKT5Q21UVEn6hyMNPATkBa/TuWbbHGNlklElKRcZJooqaU3zKU5ESMrE8uGGNkQKmlbbAi7EgjjGx7EWNJch7aBytzYqb7GHN8xa03FrSF7gqezXS7EkVIiNk4FDOSYnFhY40g1Fk85VtOPXOnrIS5xqEZ/iRlvsQsEkxUBKwzL6+VO7KB/D1EjcEDKEQbggoGg2Gn2JFpOpBhcHBStNUz0+WcdiA3B0E4uxhU1GvglkpXKIGxSExdmUyYWHNB5tVs0xgHL+IG1typHkLHCU+CMxZJxg9SPqIeW6Rx2neialv1sJXuHWoODde4sd4IK7IO4gx0jXRnFNUxz1Ztl5tI7l5RYSl+tqHMbL2NjNAqmo3K2YOMTt09iguRLkq+BvgILKOFiFYEmMB8nBHWRAiCOvN5HS7Z95VaIR2BeHuyy+P4PccY9Eek3Fdv6nm2+oppMvjSS1MuOQO4mx6RwKexIHILyYLJF2pNM9Wl0OzJKM1TimcTvqCuVVQYGOqIuLarY/JZ5iB5Lin+nO4uLf80du2PQrHBju9fAlb6kbmHq29F79q9zYXmbDhwG8my8+PBeaVnZ3Jw4OK57IyLkBxlIC3UmNdRE1MoE3tLE7ZkknuFloaNE7ClqmUoVZGZZc9R1IuND0ZSA5iJFx1i6YOM6KIbYSOO+EiCulu3ZNHOlSDZ1p+nbe9IlG0ovNCUSOBHEHuKkPYrPBVNzy96Xraa5ZN/xGCcY9LZw/wBbbEMo6srOPf8A+loS9vic8JdhRU+z/wBJMuSgNM2ydI5S04Yro1DShhx3DDXq6pIMLFjW1nXNW+hPJK0hbk9XljtAxB9r0WbV4OtvDhOMCDaZGkxJjqBvwR+YMNMGTkNUNQxMRqBH5hzwXS6G9vJHdlg3ZbH91UqZiq8oyuqizaUbEajKE/rgxvhY2x3clM1jlI+fWNsTOMjLyhEk2tsQuPBmyK/RPU6vTx7Ni3McuyqmcI86MfXRiIlzEAgYG5vcpPUs00iQIti4A8DY1Gxvx48UFMMist8ou8MI/JNZm5Byo8qinOcrm+gnTHE8SnzNK2zfTERv39aKEaVy4AlPQ5JT3OolqS4MmUMSaaJeOqQBJO/hZGzIapwP3TPwUclbtAO48fA+EBcZk8h2lLszr40FOTgZywiNsj7gsWxY98vjuZkMuTZH5JPPHg9XGOJi2BHDbxKXtiTsryxJNydpP2rswLbDxDk1FHHnlun4ALVhUJF2dyLWjpiBwEYjAImLdhMDlHSOmXH4IHoT3cBLUNIw0mFyimmjFrXyPu+xPKBJ2xQCSofNjwx3CK9ZPgidwUxBvgz4PoVkYTlAnH5JfUxEagkcT8LqqFehJPUBupD5t8SS9qURCNjc81h1RYGLs/UhNgVgBOjHYiCowNmRuQte9yh25REbaSCphUGIILtwgXCYpAy0MNaiivnjNz7ow6eXzQeYkkaNxJ6/sXLkeoE7s6MYWMinqY2jI8Za536U7fLflTFsYAADoCFGRVgkuyI1FAZYYynq3k4H49qFyicgxUNSx0uz7tNwf/KuN9ifIo9yRdqHssr2n2J6JtSg5GXwII5g3II2LfOWRF+XSeuJuVaGqaFjZGX1YWRHecizRnOKJt+I0TcgNcPuy3bRfgVz/wBk6mbVI2YGxgSNxF7+9DSTaAyaSsp2TDxK4UdGq25uR08+CwTzJubWsYHmNhROxbg4iitSbq6CXPT1Ld6t1nEjvS1FyWUhUIH6Ut8AFtU1kRLDGydgmdmAi2GRef1jwGwJdU1JkSeZTbsQApM2qqoRBkf2i0QkVXMmButVsOKM3RKTJvMX51L+qR6BsWIx8x0rswrbEadQOTNLdIFq5BFJDjLYP6JiGdLERwMzjuv8ooMj7E1rIceoTVIxU0vWNx+9qmeyPvWKnlrq7xwjYxj/AKiOHYiktAp6RNF6ij7h3Fi8HmxytKPR/TsR0Lee2eGqNveO1QsErQwekxax5IkNeVIjkfemYxhXmMhExtzwJ+PvWWvZ1Nn8hie35okrHFnPNahyQGydNl4zApmoyMj9VSvLnZZ4MEi5OCuHtAsnuBtG8oswhEHDvU6KNJIrZJNsXyF7lEP2ELBc0w8lbS8ScLbJmv8ArHfYf+sVpmMvDv8A1ivPyciydjuhwbGSNS6fMe/2H9EqrnzGonHlKNz0/Yh6Bx1RQT5FFO7Jl5wfeke6It7yEPFzU9OX/wDKJud8v68VbmIP9pLiRv7gPOTqiJbbDsI+BWLMifRYn83ZG6OHI4e4U+BT9o59kqomJgT+hgkPsy8W3cdp7ftWzKmUzr/RTA9CP52dgjESvv4rE27wK5EZaHYxsS19OYEkJvVaHRyTMaxIiXQUbVtiN7JBIwLELl7reYMpG3JNDBbBE9bLTErBmcsCB0I4rUPHrICXAOR6ANEx5sgTwkfhfFM6BsQbG3y8OmZIVJvhATdyZKK7jXBpXTtCAHGRJ6ATgP5bIZ8+a5x4TlHs+xaOg+F4jkCZMvYxMyMOA+afwpwwzKZ4RiB0XHHuSyS7EW7YUEUWiNJ3Dzf5QD3x+wLWkn6TqdPDTE9WqVuwLBSjRhRd6jAguiNsCftGC3l4Q3vMuwJCQxsFqG/BMkcoxPTGXyT2hP8A9g4cYxPXiEcRx9wDBfBKstBdJhllLUnxswvtiNJ742RFKETbaOuDCAGwALWRXR2BbJDNHJYHoQ058TyCTBk6TZlyFFag1W9YYJNUv+MDpJ/W5c+WV6EJPQtjiWihXWOXcMev3IN5y/j2wEt+Mj7lGQ2ViNEXmMrOT2/V7zZb5s0Q4bfWlIRj0nBOHBomaGxT5EgzpH1qhyw/1jhft7kyalCVUbfUpWxGOzUcB8Bc9KrHk3bxJP8A2Z8+BOZ7ZlmDeF/0PgAvM4HpL1xjpiB3gSuO8KuJXM0PqSyOomn9hdlMvKGrol1XIKy5cydJ22lE9fD4o8urFN2DidDgqOnZc/57IxxCT5G7aFj0LlktQpHbF2gYFG6LhaymChMEMV1LI03RNQNUbBMwIyYciIXRNVAtct/SiESY5EdmEMfiUwrKfUL9F/cFfHyDFnPMKSPGxoYB3QA6iUS63oprfdMR+u9N8gvUBIIUs0xL5iebt+q1z32TqLI85s8pxBv0hVbtLwJ3oTrUOtTfMnPUhqJ8Ijqn+acxcd0bd6xVY810Q/NKRtv8IHUBggWkhoJ+0zBcrB9E0jkYg7bauCyUkCw49Dbb+bAjtsjyP7AydpAQ4CiqY2cIkW/7itBxjsjEfHFB3FHkJ8DlwPMsh45TP3QB0/oo3J2C7KI24lWjyOBKXApFXl9P4dR5pww2IxAVUEiTEz//2Q==" alt=""><div><div class="t1">Q-UP英語塾 ｜ 英検2級 リーディング構文</div><div class="t2">読める<span>英文</span></div></div><div class="pt" id="pt">0 pt</div><button class="hm hide" id="hm">HOME</button></header>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+<canvas id="cf"></canvas>
 <script>
-/* ================= データ ================= */
-// t: n=名詞 a=形容詞 d=副詞 / s,e = トークン番号（句読点も1トークン）
+/* 保存（localStorage）が使えない環境（プレビュー画面など）でも止まらないよう、使えなければメモリに保存 */
+const store = (() => { try { const k = "__t"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return localStorage; } catch (e) { const m = {}; return { getItem: k => (k in m ? m[k] : null), setItem: (k, v) => { m[k] = String(v); } }; } })();
+const ELLIE = "data:image/jpeg;base64,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";
+
+/* ===================== データ ===================== */
+/* t: n=名詞 a=形容詞 d=副詞 ／ s,e = トークン番号（句読点も1トークン） */
 const SERIES = [
-  { name:"シリーズ1　名詞のカタマリ", focus:"what is now ～" },
-  { name:"シリーズ2　関係代名詞の省略", focus:"The money (she saved)" },
-  { name:"シリーズ3　分詞のカタマリ", focus:"Growing up ～ ／ built ～" }
+  { name:"名詞のカタマリ", focus:"what is now a museum" },
+  { name:"関係代名詞の省略", focus:"The money she saved …" },
+  { name:"分詞のカタマリ", focus:"Growing up … ／ temples built …" }
 ];
-const LV = ["短い文","ちょっと長い文","超長い文"];
+const LV = ["BASIC","MEDIUM","ADVANCED"];
 const P = [
- { series:0, stage:0,
-   text:"Many tourists visit what is now a museum .", verb:2,
-   chunks:[{s:3,e:7,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）になっている"}],
-   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（今は博物館になっている場所）",
-   choices:["多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、今の博物館が何であるかを訪ねる。","多くの観光客が、今すぐ博物館を訪れる。","今では多くの観光客が博物館になっている。"],
-   notes:["<b>what is now ～</b> ＝「今は～になっているもの・場所」。what は the thing (place) which のこと。","疑問詞の「何」と読むと意味が通らない。visit のすぐ後ろにあるので、まるごと visit の目的語（O）＝<b>名詞のカタマリ</b>。","is はカタマリの中の動詞。文全体のVは visit。","よく出る形：He was born in what is now Germany.（今のドイツにあたる地域で生まれた）"] },
- { series:0, stage:1,
-   text:"Many tourists from abroad visit what is now a museum .", verb:4,
-   chunks:[{s:2,e:3,t:"a",ja:"海外からの",why:"前の名詞 tourists を説明している"},{s:5,e:9,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）になっている"}],
-   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（今は博物館になっている場所）",
-   choices:["海外からの多くの観光客が、今は博物館になっている場所を訪れる。","多くの観光客が、海外にある博物館を訪れる。","海外の多くの博物館を、観光客が訪れる。","多くの観光客が、今の海外の博物館が何かを訪ねる。"],
-   notes:["(from abroad) は前の名詞 tourists を説明 →「海外からの観光客」。","<b>名詞のすぐ後ろの前置詞のカタマリ</b>は、まず「前の名詞の説明（形容詞）」を疑おう。","骨組みは短い文とまったく同じ：Many tourists visit [A]."] },
- { series:0, stage:2,
-   text:"Every summer , many tourists from abroad visit what is now a museum to learn about the history of the town .", verb:7,
-   chunks:[{s:0,e:1,t:"d",ja:"毎年夏に",why:"visit が「いつ」かを説明している（時）"},{s:5,e:6,t:"a",ja:"海外からの",why:"前の名詞 tourists を説明している"},{s:8,e:12,t:"n",ja:"今は博物館になっている場所",why:"visit の目的語（O）になっている"},{s:13,e:20,t:"d",ja:"町の歴史について学ぶために",why:"visit の目的（〜するために）を説明している"}],
-   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（今は博物館になっている場所）",
-   choices:["毎年夏、海外からの多くの観光客が、町の歴史について学ぶために、今は博物館になっている場所を訪れる。","毎年夏、町の歴史について学べる海外の博物館を、多くの観光客が訪れる。","毎年夏、多くの観光客が海外を訪れ、今は博物館で町の歴史を学んでいる。","毎年夏、海外の多くの観光客は、町の歴史を学ぶことが今の博物館だと知る。"],
-   notes:["<Every summer> は「いつ」を表す副詞のカタマリ。","<to learn about … town> は visit の目的（〜するために）を表す副詞のカタマリ。the history of the town の (of the town) はこのカタマリの中の説明なので、まとめて1つでOK。","20語あっても、たたむと Many tourists visit [A]. ── 短い文と同じ骨組み！"] },
+ { series:0, stage:0, text:"Many tourists visit what is now a museum .", verb:2,
+   chunks:[{s:3,e:7,t:"n",ja:"現在は博物館になっている場所",why:"visit の目的語（O）として機能"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（現在は博物館になっている場所）",
+   choices:["多くの観光客が、現在は博物館になっている場所を訪れる。","多くの観光客が、今の博物館が何であるかを訪ねる。","多くの観光客が、今すぐ博物館を訪れる。","今では多くの観光客が博物館になっている。"],
+   notes:["<b>what is now ～</b>＝「現在〜となっているもの／場所」。what は先行詞を含む関係代名詞（＝the place which）。","疑問詞の「何」と解釈すると文意が崩壊する。visit の直後にあるため、全体が目的語（O）として機能する<b>名詞節</b>。","is は名詞節の内部の動詞。文の V は visit。","頻出形：He was born in what is now Germany.（現在のドイツにあたる地域に生まれた）"] },
+ { series:0, stage:1, text:"Many tourists from abroad visit what is now a museum .", verb:4,
+   chunks:[{s:2,e:3,t:"a",ja:"海外からの",why:"直前の名詞 tourists を修飾"},{s:5,e:9,t:"n",ja:"現在は博物館になっている場所",why:"visit の目的語（O）として機能"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（現在は博物館になっている場所）",
+   choices:["海外からの多くの観光客が、現在は博物館になっている場所を訪れる。","多くの観光客が、海外にある博物館を訪れる。","海外の多くの博物館を、観光客が訪れる。","多くの観光客が、今の海外の博物館が何かを訪ねる。"],
+   notes:["(from abroad) は直前の名詞 tourists を後ろから修飾 →「海外からの観光客」。","名詞の直後の前置詞句は、まず<b>形容詞的用法（名詞の修飾）</b>を疑うのがセオリー。","骨格は BASIC と完全に同一：Many tourists visit [A]."] },
+ { series:0, stage:2, text:"Every summer , many tourists from abroad visit what is now a museum to learn about the history of the town .", verb:7,
+   chunks:[{s:0,e:1,t:"d",ja:"毎年夏に",why:"visit の「時」を表す"},{s:5,e:6,t:"a",ja:"海外からの",why:"直前の名詞 tourists を修飾"},{s:8,e:12,t:"n",ja:"現在は博物館になっている場所",why:"visit の目的語（O）として機能"},{s:13,e:20,t:"d",ja:"町の歴史を学ぶために",why:"visit の目的（〜するために）を表す"}],
+   skel:[["Many tourists","S"],["visit","V"],["[A]","O"]], A:"A ＝ what is now a museum（現在は博物館になっている場所）",
+   choices:["毎年夏、海外からの多くの観光客が、町の歴史を学ぶために、現在は博物館になっている場所を訪れる。","毎年夏、町の歴史を学べる海外の博物館を、多くの観光客が訪れる。","毎年夏、多くの観光客が海外を訪れ、今は博物館で町の歴史を学んでいる。","毎年夏、海外の多くの観光客は、町の歴史を学ぶことが今の博物館だと知る。"],
+   notes:["<Every summer> は「時」を表す副詞句。","<to learn about … town> は<b>目的を表す不定詞（副詞的用法）</b>。内部の (of the town) はこの句の中の修飾なので、外側の1ブロックとして処理すればよい。","20語でも骨格は BASIC と同じ。長さの正体は、修飾の量にすぎない。"] },
 
- { series:1, stage:0,
-   text:"The money she saved helped her family .", verb:4,
-   chunks:[{s:2,e:3,t:"a",ja:"彼女がためた",why:"前の名詞 money を説明している（that が省略）"}],
+ { series:1, stage:0, text:"The money she saved helped her family .", verb:4,
+   chunks:[{s:2,e:3,t:"a",ja:"彼女が貯めた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"}],
    skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
-   choices:["彼女がためたお金が、家族を助けた。","そのお金が彼女を救い、家族を助けた。","彼女はお金をためて、家族を助けた。","彼女の家族がためたお金が、役に立った。"],
-   notes:["The money (she saved) は The money (that) she saved の that が<b>省略</b>された形。","<b>名詞＋主語＋動詞</b>（money she saved）と並んだら、間に関係代名詞が隠れている合図。","saved はカタマリの中の動詞。文全体のVは helped。saved を「救った」と読むと意味がこわれる。"] },
- { series:1, stage:1,
-   text:"The money she saved from her part-time job helped her family of five .", verb:8,
-   chunks:[{s:2,e:7,t:"a",ja:"彼女がアルバイトでためた",why:"前の名詞 money を説明している（that が省略）"},{s:11,e:12,t:"a",ja:"5人の",why:"前の名詞 family を説明している"}],
+   choices:["彼女が貯めたお金が、家族を助けた。","そのお金が彼女を救い、家族を助けた。","彼女はお金を貯めて、家族を助けた。","彼女の家族が貯めたお金が、役に立った。"],
+   notes:["The money (she saved) は、目的格の関係代名詞 that が<b>省略</b>された形。","<b>名詞＋S＋V</b>（money she saved）の並びは、関係代名詞省略のサイン。","saved は関係詞節の内部の動詞。文の V は helped。saved を「救った」と読んだ時点で構造を見失う。"] },
+ { series:1, stage:1, text:"The money she saved from her part-time job helped her family of five .", verb:8,
+   chunks:[{s:2,e:7,t:"a",ja:"彼女がアルバイトで貯めた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"},{s:11,e:12,t:"a",ja:"5人の",why:"直前の名詞 family を修飾"}],
    skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
-   choices:["彼女がアルバイトでためたお金が、5人家族を助けた。","5人家族がアルバイトでためたお金が、彼女を助けた。","そのお金は彼女をアルバイトから救い、5人家族を助けた。","彼女がためたお金で、5人がアルバイトを手伝った。"],
-   notes:["(she saved from her part-time job) が money を説明。カタマリは job まで続く（どこで終わるか＝次の動詞 helped の手前）。","(of five) は family を説明 →「5人家族」。","骨組みは短い文と同じ：The money helped her family."] },
- { series:1, stage:2,
-   text:"After her father lost his job , the money she had saved from her part-time job helped her family of five for almost a year .", verb:16,
-   chunks:[{s:0,e:5,t:"d",ja:"父親が仕事を失ったあと",why:"文全体が「いつ」かを説明している（時）"},{s:9,e:15,t:"a",ja:"彼女がアルバイトでためていた",why:"前の名詞 money を説明している（that が省略）"},{s:19,e:20,t:"a",ja:"5人の",why:"前の名詞 family を説明している"},{s:21,e:24,t:"d",ja:"ほぼ1年間",why:"helped の期間を説明している"}],
+   choices:["彼女がアルバイトで貯めたお金が、5人家族を助けた。","5人家族がアルバイトで貯めたお金が、彼女を助けた。","そのお金は彼女をアルバイトから救い、5人家族を助けた。","彼女が貯めたお金で、5人がアルバイトを手伝った。"],
+   notes:["関係詞節 (she saved from her part-time job) は money を修飾し、job まで続く。<b>境界は次の動詞 helped の直前</b>。","(of five) は family を修飾 →「5人家族」。","骨格は BASIC と同一：The money helped her family."] },
+ { series:1, stage:2, text:"After her father lost his job , the money she had saved from her part-time job helped her family of five for almost a year .", verb:16,
+   chunks:[{s:0,e:5,t:"d",ja:"父親が職を失った後",why:"主節全体の「時」を表す"},{s:9,e:15,t:"a",ja:"彼女がアルバイトで貯めていた",why:"直前の名詞 money を修飾（関係代名詞 that の省略）"},{s:19,e:20,t:"a",ja:"5人の",why:"直前の名詞 family を修飾"},{s:21,e:24,t:"d",ja:"ほぼ1年間",why:"helped の期間を表す"}],
    skel:[["The money","S"],["helped","V"],["her family","O"]], A:"",
-   choices:["父親が仕事を失ったあと、彼女がアルバイトでためていたお金が、5人家族をほぼ1年間支えた。","父親が仕事を失ったあと、彼女はアルバイトでためたお金を1年間で使いきった。","彼女の父親は、彼女がアルバイトでためたお金のせいで、ほぼ1年間仕事を失った。","ほぼ1年間アルバイトをした彼女は、父親の仕事を見つけて5人家族を助けた。"],
-   notes:["<After her father lost his job> は「いつ」を表す副詞のカタマリ（after ＋ S V）。","動詞は lost / had saved / helped の3つ。<b>カタマリの外にあるのは helped だけ</b> → これが文のV。","had saved（過去完了）＝ helped よりも<b>前から</b>ためていた、という時間の順番を表している。","24語でも、たたむと The money helped her family. の5語！"] },
+   choices:["父親が職を失った後、彼女がアルバイトで貯めていたお金が、5人家族をほぼ1年間支えた。","父親が職を失った後、彼女はアルバイトで貯めたお金を1年で使い切った。","彼女の父親は、彼女がアルバイトで貯めたお金のせいで、ほぼ1年間職を失った。","ほぼ1年間アルバイトをした彼女は、父親の仕事を見つけて5人家族を助けた。"],
+   notes:["<After her father lost his job> は「時」を表す<b>副詞節</b>（接続詞 after ＋ S V）。","動詞は lost / had saved / helped の3つ。修飾部の外にあるのは helped のみ → これが主節の V。","had saved（過去完了）は、helped より<b>前の時点から</b>貯めていたことを示す。時制は出来事の順序を示すシグナル。","24語が、たたむと5語の骨格に収束する。"] },
 
- { series:2, stage:0,
-   text:"Growing up in Kyoto , he loved old temples .", verb:6,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"後ろの文全体を説明している（分詞構文）"}],
+ { series:2, stage:0, text:"Growing up in Kyoto , he loved old temples .", verb:6,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"主節全体を修飾（分詞構文）"}],
    skel:[["He","S"],["loved","V"],["old temples","O"]], A:"",
-   choices:["京都で育ったので、彼は古いお寺が大好きだった。","京都が大きくなるにつれて、彼は古いお寺を愛した。","彼は京都で古いお寺を育てるのが好きだった。","京都で育った古いお寺を、彼は愛した。"],
-   notes:["Growing up in Kyoto は<b>分詞構文</b>。主語は書いていないが、<b>文の主語 he と同じ</b>（育ったのは彼）。","「〜する中で・〜なので」と、後ろの文全体を説明する副詞のカタマリ。"] },
- { series:2, stage:1,
-   text:"Growing up in Kyoto , he loved old temples built hundreds of years ago .", verb:6,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"後ろの文全体を説明している（分詞構文）"},{s:9,e:13,t:"a",ja:"何百年も前に建てられた",why:"前の名詞 temples を説明している"}],
+   choices:["京都で育ったので、彼は古い寺が大好きだった。","京都が大きくなるにつれて、彼は古い寺を愛した。","彼は京都で古い寺を育てるのが好きだった。","京都で育った古い寺を、彼は愛した。"],
+   notes:["Growing up in Kyoto は<b>分詞構文</b>。意味上の主語は、主節の主語 he と一致する。","「〜する中で／〜なので」と、主節全体を修飾する副詞句。"] },
+ { series:2, stage:1, text:"Growing up in Kyoto , he loved old temples built hundreds of years ago .", verb:6,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"主節全体を修飾（分詞構文）"},{s:9,e:13,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"}],
    skel:[["He","S"],["loved","V"],["old temples","O"]], A:"",
-   choices:["京都で育った彼は、何百年も前に建てられた古いお寺が大好きだった。","京都で育った彼は、何百年も前に古いお寺を建てるのが好きだった。","京都で育った彼は古いお寺が好きで、何百年も前にそれを建てた。","何百年も前に京都で育った彼は、古いお寺を愛した。"],
-   notes:["built は過去形ではなく<b>過去分詞</b>。(built hundreds of years ago) が temples を説明 →「何百年も前に建てられたお寺」。","<b>名詞＋過去分詞</b>（temples built）は、まず「〜された名詞」を疑おう。built をVと読むと「お寺が建てた」になってしまう。"] },
- { series:2, stage:2,
-   text:"Growing up in Kyoto , the boy who later became a famous architect loved old temples built hundreds of years ago because each one had its own story .", verb:13,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"後ろの文全体を説明している（分詞構文）"},{s:7,e:12,t:"a",ja:"のちに有名な建築家になった",why:"前の名詞 boy を説明している"},{s:16,e:20,t:"a",ja:"何百年も前に建てられた",why:"前の名詞 temples を説明している"},{s:21,e:27,t:"d",ja:"1つ1つに物語があったので",why:"loved の理由を説明している"}],
+   choices:["京都で育った彼は、数百年前に建てられた古い寺が大好きだった。","京都で育った彼は、数百年前に古い寺を建てるのが好きだった。","京都で育った彼は古い寺が好きで、数百年前にそれを建てた。","数百年前に京都で育った彼は、古い寺を愛した。"],
+   notes:["built は過去形ではなく<b>過去分詞</b>。(built hundreds of years ago) が temples を後ろから修飾 →「数百年前に建てられた寺」。","<b>名詞＋過去分詞</b>は、まず「〜された名詞」と読む。built を V と取ると「寺が建てた」という破綻した文になる。"] },
+ { series:2, stage:2, text:"Growing up in Kyoto , the boy who later became a famous architect loved old temples built hundreds of years ago because each one had its own story .", verb:13,
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"主節全体を修飾（分詞構文）"},{s:7,e:12,t:"a",ja:"後に有名な建築家となった",why:"直前の名詞 boy を修飾"},{s:16,e:20,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"},{s:21,e:27,t:"d",ja:"一つ一つに固有の物語があったので",why:"loved の理由を表す"}],
    skel:[["The boy","S"],["loved","V"],["old temples","O"]], A:"",
-   choices:["京都で育ち、のちに有名な建築家になったその少年は、1つ1つに物語があるので、何百年も前に建てられた古いお寺が大好きだった。","京都で育ったその少年は、有名な建築家が何百年も前に建てた古いお寺が好きだった。","その少年は、古いお寺に物語があったので、のちに京都で有名な建築家になった。","京都で育った有名な建築家は、その少年に古いお寺の物語を話した。"],
-   notes:["(who later became a famous architect) が boy を説明。<b>主語 the boy と動詞 loved の間に割りこんでいる</b>のがポイント。","動詞っぽい語は became / loved / built / had の4つ。カタマリの外にあるのは loved だけ。","<because each one had its own story> は loved の理由を表す副詞のカタマリ。","27語でも、たたむと The boy loved old temples. の5語！"] }
+   choices:["京都で育ち、後に有名な建築家となったその少年は、一つ一つに固有の物語があるという理由で、数百年前に建てられた古い寺を愛した。","京都で育ったその少年は、有名な建築家が数百年前に建てた古い寺が好きだった。","その少年は、古い寺に物語があったので、後に京都で有名な建築家になった。","京都で育った有名な建築家は、その少年に古い寺の物語を話した。"],
+   notes:["関係詞節 (who later became a famous architect) が boy を修飾。<b>主語 the boy と動詞 loved の間に割り込む</b>構造に注意。","動詞の候補は became / loved / built / had の4つ。修飾部の外にあるのは loved のみ。","<because each one had its own story> は理由を表す副詞節。","27語が5語の骨格に。ここまで読めれば、英検2級の長文の1文は怖くない。"] }
 ];
 P.forEach(p => { p.tokens = p.text.split(" "); p.words = p.tokens.filter(t => !/^[.,]$/.test(t)).length; });
 
-/* ================= 状態 ================= */
-const KEY = "eibunTatami1_v1";
-const MEM = {};
-const LS = {
-  get(k){ try { return localStorage.getItem(k); } catch(e){ return k in MEM ? MEM[k] : null; } },
-  set(k,v){ try { localStorage.setItem(k,v); } catch(e){ MEM[k] = v; } }
-};
-let save; try { save = JSON.parse(LS.get(KEY) || "null") || {stars:{},best:0}; } catch(e){ save = {stars:{},best:0}; }
-const S = { pi:0, phase:"verb", mistakes:0, log:[], found:new Set(), selS:null, selE:null, hint:0, runResults:[] };
-const $ = id => document.getElementById(id);
+/* ===================== 状態 ===================== */
+const KEY = "qupRead1_v1";
+let save; try { save = JSON.parse(store.getItem(KEY) || "null") || {}; } catch (e) { save = {}; }
+save.rank = save.rank || {}; save.best = save.best || 0; save.pts = save.pts || 0;
+const S = { pi:0, phase:"verb", miss:0, found:new Set(), selS:null, selE:null, hint:0, combo:0, run:[], runPts:0 };
+const $ = s => document.querySelector(s);
+const app = $("#app");
 const symO = {n:"[",a:"(",d:"<"}, symC = {n:"]",a:")",d:">"}, tName = {n:"名詞",a:"形容詞",d:"副詞"};
 const isPunct = t => /^[.,]$/.test(t);
+const esc = s => String(s).replace(/[&<>]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" })[c]);
 const chunkOf = (p,i) => p.chunks.findIndex(c => i >= c.s && i <= c.e);
-const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-const chunkText = (p,c) => p.tokens.slice(c.s, c.e+1).join(" ").replace(/ ([.,])/g,"$1");
-const starStr = n => "★".repeat(n) + "☆".repeat(3-n);
+const chunkText = (p,c) => p.tokens.slice(c.s, c.e+1).join(" ");
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
+const rankOf = m => m === 0 ? "S" : m <= 2 ? "A" : "B";
+const RORD = { S:3, A:2, B:1 };
+function persist(){ store.setItem(KEY, JSON.stringify(save)); }
+function setPts(){ $("#pt").textContent = (S.inRun ? S.runPts : save.pts) + " pt"; }
+function addPts(n){ S.runPts += n; setPts(); }
+function bubble(t){ return `<div class="bubble"><img src="${ELLIE}" alt=""><div>${t}</div></div>`; }
+function toast(big, small, color){
+  const t = $("#toast"); t.innerHTML = `${big}${small ? `<small>${small}</small>` : ""}`; t.style.color = color || "#fff";
+  t.style.textShadow = color ? "0 3px 0 rgba(0,0,0,.12)" : "0 3px 0 rgba(0,0,0,.25)";
+  t.classList.remove("go"); void t.offsetWidth; t.classList.add("go");
+}
+function hit(base){
+  S.combo++; const bonus = S.combo >= 2 ? (S.combo - 1) * 5 : 0; addPts(base + bonus);
+  const words = ["NICE!","GREAT!","EXCELLENT!","AMAZING!"];
+  toast(S.combo >= 2 ? `COMBO ×${S.combo}` : words[0], `+${base + bonus} pt`, "#ff6b57");
+}
+function miss(){ S.combo = 0; S.miss++; }
 
-/* ================= ホーム ================= */
-function showHome(){
-  $("home").classList.remove("hidden"); $("play").classList.add("hidden"); $("result").classList.add("hidden"); $("homeBtn").classList.add("hidden");
-  $("nameIn").value = LS.get("eibunTatamiName") || "";
-  $("bestLen").textContent = save.best ? `📏 読めた最長の文：${save.best}語` : "";
-  let h = "";
+/* ===================== ホーム ===================== */
+function home(){
+  S.inRun = false; setPts(); $("#hm").classList.add("hide");
+  let h = `<div class="hero">
+    <div class="en">READ LONG. FOLD SMART.</div>
+    <div class="jp">長文は、<span>たためば</span>読める。</div>
+    <div class="sub">英検2級の長文が難しいのは、1文に修飾のカタマリがいくつも付いているから。カタマリを括って“たたむ”と、骨格は驚くほどシンプルになる。</div>
+    ${save.best ? `<div class="stat">MAX LENGTH ── ${save.best} words</div>` : ""}
+  </div>`;
+  h += bubble("Hi! エリーです。BASIC → MEDIUM → ADVANCED と、同じ骨格の文がどんどん長くなっていきます。<b>27語の文</b>まで一気に駆け上がりましょう！");
+  h += `<div class="card"><h2>3つの記号</h2><div class="rule">
+    <span class="k kn">[ ]</span><span><b>名詞</b>のカタマリ ── 主語・目的語・補語として機能</span>
+    <span class="k ka">( )</span><span><b>形容詞</b>のカタマリ ── 直前の<b>名詞</b>を修飾</span>
+    <span class="k kd">&lt; &gt;</span><span><b>副詞</b>のカタマリ ── 動詞や文全体を修飾（時・理由・目的）</span>
+  </div><div class="flow"><span>01 FIND V</span><span>02 BRACKET</span><span>03 FOLD</span><span>04 MEANING</span></div></div>`;
   SERIES.forEach((s,si) => {
-    h += `<div class="series"><b>${s.name}</b> <span class="muted">${esc(s.focus)}</span><div class="st">`;
-    P.forEach((p,pi) => { if (p.series !== si) return;
-      const st = save.stars[pi] || 0;
-      h += `<button class="pill" data-pi="${pi}">${LV[p.stage]}（${p.words}語）${st ? `<span class="stars">${starStr(st)}</span>` : ""}</button>`;
-    });
+    h += `<div class="series"><div class="no">SERIES 0${si+1}</div><div class="nm">${s.name}</div><div class="fc">${esc(s.focus)}</div><div class="lvs">`;
+    P.forEach((p,pi) => { if (p.series !== si) return; const r = save.rank[pi];
+      h += `<button class="lv" data-pi="${pi}"><b>${LV[p.stage]}</b><small>${p.words} words</small>${r ? `<span class="rk ${r}">${r}</span>` : `<span class="rk">─</span>`}</button>`; });
     h += `</div></div>`;
   });
-  $("seriesList").innerHTML = h;
-  document.querySelectorAll(".pill").forEach(b => b.onclick = () => { S.runResults = []; startProblem(+b.dataset.pi); });
+  h += `<footer>※エリー先生はAIで作ったキャラクターです。内容は現役の英検指導講師が監修しています。<br>例文はすべてオリジナルです。<br>英検®は、公益財団法人 日本英語検定協会の登録商標です。<br>このアプリは、同協会の承認や推奨、その他の検討を受けたものではありません。<br>© Q-UP英語塾</footer>`;
+  app.innerHTML = h;
+  document.querySelectorAll(".lv").forEach(b => b.onclick = () => { S.run = []; S.runPts = 0; S.combo = 0; S.inRun = true; start(+b.dataset.pi); });
+  scrollTo(0,0);
 }
-$("nameIn").addEventListener("input", e => LS.set("eibunTatamiName", e.target.value.trim()));
 
-/* ================= 問題 ================= */
-function startProblem(pi){
-  Object.assign(S, { pi, phase:"verb", mistakes:0, log:[], found:new Set(), selS:null, selE:null, hint:0 });
-  $("home").classList.add("hidden"); $("result").classList.add("hidden"); $("play").classList.remove("hidden"); $("homeBtn").classList.remove("hidden");
-  const p = P[pi];
-  $("seriesName").textContent = SERIES[p.series].name;
-  $("lvName").textContent = `${LV[p.stage]}（${p.words}語）`;
-  $("dots").innerHTML = [0,1,2].map(k => `<span class="${k < p.stage ? "done" : k === p.stage ? "on" : ""}"></span>`).join("");
-  ["skelArea","choiceArea","explainArea","foldBtn","clearBtn","typeBtns"].forEach(id => $(id).classList.add("hidden"));
-  $("hintBtn").classList.remove("hidden"); $("hintBtn").disabled = false;
-  $("foundList").innerHTML = ""; setFb("", "");
-  setSteps(0);
-  $("inst").textContent = "① この文全体の動詞（V）はどれ？ タップしよう";
-  renderSentence();
-  window.scrollTo(0,0);
+/* ===================== プレイ ===================== */
+function start(pi){
+  Object.assign(S, { pi, phase:"verb", miss:0, found:new Set(), selS:null, selE:null, hint:0 });
+  const p = P[pi]; setPts(); $("#hm").classList.remove("hide");
+  app.innerHTML = `<div class="card pop">
+    <div class="top"><span class="badge ${LV[p.stage]}">${LV[p.stage]}</span><span class="wc">${p.words} words</span><span class="sname">SERIES 0${p.series+1}｜${SERIES[p.series].name}</span></div>
+    <div class="prog">${[0,1,2].map(k => `<i class="${k < p.stage ? "d" : k === p.stage ? "c" : ""}"></i>`).join("")}</div>
+    <div class="steps" id="steps"><div>01 FIND V<small>動詞を特定</small></div><div>02 BRACKET<small>カタマリを括る</small></div><div>03 FOLD<small>たたむ</small></div><div>04 MEANING<small>意味</small></div></div>
+    <div class="inst" id="inst"></div>
+    <div class="sentence" id="sentence"></div>
+    <div class="typebtns hide" id="typeBtns">
+      <button class="tb-n" data-t="n">[ ]<small>名詞</small></button>
+      <button class="tb-a" data-t="a">( )<small>形容詞</small></button>
+      <button class="tb-d" data-t="d">&lt; &gt;<small>副詞</small></button>
+    </div>
+    <div class="tools" id="tools"><button class="btn sub" id="hintBtn">💡 HINT</button><button class="btn sub hide" id="clearBtn">選び直す</button></div>
+    <button class="btn fold hide" id="foldBtn" style="margin-top:12px">FOLD</button>
+    <div class="fb" id="fb"></div>
+    <div class="found" id="found"></div>
+    <div id="after"></div>
+  </div>`;
+  $("#hintBtn").onclick = hint; $("#clearBtn").onclick = clearSel; $("#foldBtn").onclick = fold;
+  document.querySelectorAll("#typeBtns button").forEach(b => b.onclick = () => pickType(b.dataset.t));
+  steps(0); $("#inst").innerHTML = "文全体の動詞（V）をタップ";
+  render(); scrollTo(0,0);
 }
-function setSteps(k){ [...$("steps").children].forEach((d,i) => d.className = i < k ? "ok" : i === k ? "on" : ""); }
-function setFb(cls, html){ const f = $("fb"); f.className = "fb" + (cls ? " " + cls : ""); f.innerHTML = html; }
+function steps(k){ [...$("#steps").children].forEach((d,i) => d.className = i < k ? "ok" : i === k ? "on" : ""); }
+function fb(cls, head, html){ const f = $("#fb"); f.className = "fb" + (cls ? " " + cls : ""); f.innerHTML = cls ? `<span class="h">${head}</span>${html}` : ""; }
 
-function renderSentence(){
-  const p = P[S.pi]; let h = ""; let i = 0;
+function render(){
+  const p = P[S.pi]; let h = "", i = 0;
   while (i < p.tokens.length){
     const ci = chunkOf(p,i);
     if (ci >= 0){
       const c = p.chunks[ci], f = S.found.has(ci);
       h += `<span class="seg${f ? " f-" + c.t : ""}" data-ci="${ci}">`;
       if (f) h += `<span class="br ${c.t}">${esc(symO[c.t])}</span>`;
-      for (let k = c.s; k <= c.e; k++) h += tokHtml(p,k);
+      for (let k = c.s; k <= c.e; k++) h += tok(p,k);
       if (f) h += `<span class="br ${c.t}">${esc(symC[c.t])}</span>`;
       h += `</span> `; i = c.e + 1;
-    } else { h += tokHtml(p,i) + " "; i++; }
+    } else { h += tok(p,i) + " "; i++; }
   }
-  h = h.replace(/ (<span class="tok punct)/g, "$1");
-  $("sentence").innerHTML = h;
+  $("#sentence").innerHTML = h.replace(/ (<span class="tok punct)/g, "$1");
   document.querySelectorAll("#sentence .tok").forEach(el => el.onclick = () => onTok(+el.dataset.i));
 }
-function tokHtml(p,k){
-  const t = p.tokens[k]; let cls = "tok";
-  if (isPunct(t)) cls += " punct";
-  if (k === p.verb && S.phase !== "verb") cls += " isV";
-  if (S.selS !== null){ const a = Math.min(S.selS, S.selE ?? S.selS), b = Math.max(S.selS, S.selE ?? S.selS); if (k >= a && k <= b) cls += " sel"; }
-  return `<span class="${cls}" data-i="${k}">${esc(t)}</span>`;
+function tok(p,k){
+  const t = p.tokens[k]; let c = "tok";
+  if (isPunct(t)) c += " punct";
+  if (k === p.verb && S.phase !== "verb") c += " isV";
+  if (S.selS !== null){ const a = Math.min(S.selS, S.selE ?? S.selS), b = Math.max(S.selS, S.selE ?? S.selS); if (k >= a && k <= b) c += " sel"; }
+  return `<span class="${c}" data-i="${k}">${esc(t)}</span>`;
 }
-function flash(from, to){ for (let k = from; k <= to; k++){ const el = document.querySelector(`#sentence .tok[data-i="${k}"]`); if (el){ el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); } } }
+function flash(a,b){ for (let k = a; k <= b; k++){ const el = document.querySelector(`#sentence .tok[data-i="${k}"]`); if (el){ el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); } } }
 
 function onTok(i){
   const p = P[S.pi], t = p.tokens[i];
   if (isPunct(t)) return;
   if (S.phase === "verb"){
     if (i === p.verb){
-      S.phase = "chunk"; setSteps(1);
-      setFb("ok", `⭕ 正解！ <b>${esc(t)}</b> が文全体のV。V以外の部分に、カタマリがくっついているよ。`);
-      startChunkPhase(); return;
+      S.phase = "chunk"; steps(1); hit(10);
+      fb("ok", "NICE!", `<b>${esc(t)}</b> が主節の V。V 以外の部分に、修飾のカタマリが付いている。`);
+      S.hint = 0; render(); inst(); return;
     }
-    S.mistakes++;
-    const ci = chunkOf(p,i);
-    if (ci >= 0){ S.log.push(`Vの取りちがえ：${t}`); setFb("ng", `❌ <b>${esc(t)}</b> は、ある<b>カタマリの中</b>の語。カタマリの中の動詞は、文全体のVにはならないよ。もう一度！`); }
-    else { S.log.push(`Vの取りちがえ：${t}`); setFb("ng", `❌ <b>${esc(t)}</b> は文のVではないよ。もう一度！`); }
+    miss();
+    if (chunkOf(p,i) >= 0) fb("ng", "MISS", `<b>${esc(t)}</b> は修飾部（カタマリ）の内部にある語。修飾部の中の動詞は、主節の V にはならない。`);
+    else fb("ng", "MISS", `<b>${esc(t)}</b> は主節の V ではない。もう一度。`);
     return;
   }
   if (S.phase === "chunk"){
     const ci = chunkOf(p,i);
-    if (ci >= 0 && S.found.has(ci)){ setFb("info", "そこはもうくくったよ。ほかのカタマリを探そう。"); return; }
-    if (S.selS === null || S.selE !== null){ S.selS = i; S.selE = null; $("typeBtns").classList.add("hidden"); }
-    else { S.selE = i; $("typeBtns").classList.remove("hidden"); }
-    $("clearBtn").classList.remove("hidden");
-    renderSentence(); updateChunkInst();
+    if (ci >= 0 && S.found.has(ci)){ fb("info", "INFO", "そこは括り済み。残りのカタマリを探そう。"); return; }
+    if (S.selS === null || S.selE !== null){ S.selS = i; S.selE = null; $("#typeBtns").classList.add("hide"); }
+    else { S.selE = i; $("#typeBtns").classList.remove("hide"); }
+    $("#clearBtn").classList.remove("hide");
+    render(); inst();
   }
 }
-function remaining(){ return P[S.pi].chunks.length - S.found.size; }
-function startChunkPhase(){ S.selS = null; S.selE = null; S.hint = 0; renderSentence(); updateChunkInst(); }
-function updateChunkInst(){
-  const n = remaining();
-  if (S.selS === null) $("inst").innerHTML = `② カタマリの<b>最初の語</b>をタップ（あと <b>${n}</b> 個）`;
-  else if (S.selE === null) $("inst").innerHTML = `② カタマリの<b>最後の語</b>をタップ（1語だけなら同じ語をもう一度）`;
-  else $("inst").innerHTML = `② このカタマリの種類は？`;
+const left = () => P[S.pi].chunks.length - S.found.size;
+function inst(){
+  const n = `<span class="rem">残り ${left()}</span>`;
+  if (S.selS === null) $("#inst").innerHTML = `カタマリの<b>始点</b>をタップ ${n}`;
+  else if (S.selE === null) $("#inst").innerHTML = `カタマリの<b>終点</b>をタップ（1語なら同じ語をもう一度） ${n}`;
+  else $("#inst").innerHTML = `このカタマリの種類は？ ${n}`;
 }
-$("clearBtn").onclick = () => { S.selS = null; S.selE = null; $("typeBtns").classList.add("hidden"); renderSentence(); updateChunkInst(); };
-document.querySelectorAll("#typeBtns button").forEach(b => b.onclick = () => pickType(b.dataset.t));
+function clearSel(){ S.selS = null; S.selE = null; $("#typeBtns").classList.add("hide"); $("#clearBtn").classList.add("hide"); render(); inst(); }
 
 function pickType(t){
-  const p = P[S.pi]; const s = Math.min(S.selS, S.selE), e = Math.max(S.selS, S.selE);
+  const p = P[S.pi], s = Math.min(S.selS, S.selE), e = Math.max(S.selS, S.selE);
   const m = p.chunks.findIndex((c,ci) => !S.found.has(ci) && c.s === s && c.e === e);
   if (m >= 0){
     const c = p.chunks[m];
     if (c.t === t){
-      S.found.add(m); S.selS = null; S.selE = null; S.hint = 0;
-      $("typeBtns").classList.add("hidden"); $("clearBtn").classList.add("hidden");
-      setFb("ok", `⭕ ${esc(symO[t])} ${esc(chunkText(p,c))} ${esc(symC[t])} ＝ <b>${tName[t]}</b>のカタマリ。${esc(c.why)}。<br>意味：「${esc(c.ja)}」`);
-      renderSentence(); renderFoundList();
-      if (remaining() === 0) toFold(); else updateChunkInst();
+      S.found.add(m); S.selS = null; S.selE = null; S.hint = 0; hit(20);
+      $("#typeBtns").classList.add("hide"); $("#clearBtn").classList.add("hide");
+      fb("ok", "GREAT!", `${tName[t]}のカタマリ ── ${esc(c.why)}。<br>意味：「${esc(c.ja)}」`);
+      render(); listFound();
+      if (left() === 0) toFold(); else inst();
     } else {
-      S.mistakes++; S.log.push(`種類のまちがい：${chunkText(p,c)} を${tName[t]}に`);
-      setFb("ng", `△ 範囲は正解！ でも種類がちがう。ヒント：このカタマリは「${esc(c.why)}」よ。`);
+      miss();
+      fb("ng", "ALMOST", `範囲は正確。種類を再判定しよう ── このカタマリは「${esc(c.why)}」。`);
     }
     return;
   }
-  S.mistakes++;
+  miss();
   const over = p.chunks.some((c,ci) => !S.found.has(ci) && !(e < c.s || s > c.e));
-  S.log.push(`範囲のまちがい：${p.tokens.slice(s,e+1).join(" ")}`);
-  setFb("ng", over ? "❌ おしい！ カタマリの<b>始まり</b>か<b>終わり</b>がずれているよ。" : "❌ そこはカタマリではないよ（骨組みの部分かも）。");
-  S.selS = null; S.selE = null; $("typeBtns").classList.add("hidden"); renderSentence(); updateChunkInst();
+  fb("ng", "MISS", over ? "惜しい。カタマリの<b>始点</b>か<b>終点</b>がずれている。" : "そこはカタマリではない（骨格の一部の可能性）。");
+  S.selS = null; S.selE = null; $("#typeBtns").classList.add("hide"); render(); inst();
 }
-function renderFoundList(){
+function listFound(){
   const p = P[S.pi];
-  $("foundList").innerHTML = [...S.found].sort((a,b) => p.chunks[a].s - p.chunks[b].s).map(ci => { const c = p.chunks[ci];
-    return `<div><span class="br ${c.t}" style="font-size:16px">${esc(symO[c.t] + " " + symC[c.t])}</span> ${esc(chunkText(p,c))} … 「${esc(c.ja)}」</div>`; }).join("");
+  $("#found").innerHTML = [...S.found].sort((a,b) => p.chunks[a].s - p.chunks[b].s).map(ci => { const c = p.chunks[ci];
+    return `<div><b class="${c.t}">${esc(symO[c.t])}</b> ${esc(chunkText(p,c))} <b class="${c.t}">${esc(symC[c.t])}</b> <span>… ${esc(c.ja)}</span></div>`; }).join("");
 }
-
-$("hintBtn").onclick = () => {
-  const p = P[S.pi]; S.mistakes++; S.hint++;
+function hint(){
+  const p = P[S.pi]; miss(); S.hint++;
   if (S.phase === "verb"){
-    S.log.push("ヒント（V）");
-    if (S.hint === 1) setFb("info", "💡 動詞っぽい語がいくつかあるときは、<b>カタマリの中にない動詞</b>が文のV。who / that / 接続詞（after, because）のあと、-ing / 過去分詞のあとに続く動詞はカタマリの中かも。");
-    else { setFb("info", "💡 光っている語がVだよ。"); flash(p.verb, p.verb); }
+    if (S.hint === 1) fb("info", "HINT", "動詞が複数あるときは、<b>修飾部の外にある動詞</b>が V。関係詞（who / that）・接続詞（after / because）・分詞（-ing / 過去分詞）の後ろは、修飾部の内部である可能性が高い。");
+    else { fb("info", "HINT", "光っている語が V。"); flash(p.verb, p.verb); }
   } else if (S.phase === "chunk"){
-    const ci = p.chunks.findIndex((c,k) => !S.found.has(k)); const c = p.chunks[ci];
-    S.log.push(`ヒント（カタマリ：${chunkText(p,c)}）`);
-    if (S.hint === 1){ setFb("info", "💡 光っている語から、カタマリが始まるよ。"); flash(c.s, c.s); }
-    else { setFb("info", `💡 光っている範囲がカタマリ。種類は「${esc(c.why)}」から考えよう。`); flash(c.s, c.e); }
+    const c = p.chunks.find((c,k) => !S.found.has(k));
+    if (S.hint === 1){ fb("info", "HINT", "光っている語から、カタマリが始まる。"); flash(c.s, c.s); }
+    else { fb("info", "HINT", `光っている範囲がカタマリ。種類は「${esc(c.why)}」から判断しよう。`); flash(c.s, c.e); }
   }
-};
-
-/* ================= たたむ ================= */
-function toFold(){
-  S.phase = "fold"; setSteps(2);
-  $("inst").innerHTML = "③ カタマリが全部見つかった！ たたんで骨組みを見よう";
-  $("hintBtn").classList.add("hidden"); $("foldBtn").classList.remove("hidden");
 }
-$("foldBtn").onclick = () => {
-  const p = P[S.pi]; $("foldBtn").classList.add("hidden");
+
+/* ===================== FOLD ===================== */
+function toFold(){
+  S.phase = "fold"; steps(2);
+  $("#inst").innerHTML = "全カタマリ確保。<b>FOLD</b> で骨格だけを残せ";
+  $("#tools").classList.add("hide"); $("#foldBtn").classList.remove("hide");
+}
+function fold(){
+  const p = P[S.pi]; $("#foldBtn").classList.add("hide");
   document.querySelectorAll("#sentence .seg").forEach(seg => {
-    const c = p.chunks[+seg.dataset.ci];
-    seg.classList.add("fading");
+    const c = p.chunks[+seg.dataset.ci]; seg.classList.add("fading");
     setTimeout(() => {
       if (c.t === "n"){ seg.className = "seg"; seg.innerHTML = `<span class="chipA">[ A ]</span>`; }
-      else { seg.style.display = "none"; hideAdjComma(seg); }
-    }, 600);
+      else { seg.style.display = "none"; [seg.previousElementSibling, seg.nextElementSibling].forEach(el => { if (el && el.classList.contains("punct") && el.textContent === ",") el.style.display = "none"; }); }
+    }, 560);
   });
+  const core = p.skel.reduce((n,[w]) => n + (w === "[A]" ? 1 : w.split(" ").length), 0);
   setTimeout(() => {
-    $("skel").innerHTML = p.skel.map(([w,r]) => `<div class="part"><div class="w" style="${r==="V" ? "color:#d6336c" : ""}">${esc(w)}</div><div class="r">${r}</div></div>`).join("");
-    $("skelA").textContent = p.A;
-    $("skelArea").classList.remove("hidden");
-    setSteps(3); S.phase = "meaning";
-    $("inst").innerHTML = `③ ${p.words}語の文が、たたむとこれだけ！`;
-    showChoices();
-  }, 700);
-};
-function hideAdjComma(seg){
-  [seg.previousElementSibling, seg.nextElementSibling].forEach(el => { if (el && el.classList.contains("punct") && el.textContent === ",") el.style.display = "none"; });
+    toast("FOLD!", `${p.words} → ${core} words`, "#0e6f78");
+    S.phase = "meaning"; steps(3);
+    $("#inst").innerHTML = "骨格";
+    $("#after").innerHTML = `<div class="skel">${p.skel.map(([w,r],k) => `<div class="p" style="animation-delay:${k*.12}s"><div class="w${r === "V" ? " v" : ""}">${esc(w)}</div><div class="r">${r}</div></div>`).join("")}</div>
+      ${p.A ? `<div class="muted">${esc(p.A)}</div>` : ""}
+      <div class="shrink"><b>${p.words}</b> words → <b>${core}</b> words</div>
+      <div class="sec">04 MEANING</div><div class="inst">元の英文の意味として正しいものは？</div>
+      <div class="choices" id="choices">${shuffle([0,1,2,3]).map(k => `<button data-k="${k}">${esc(p.choices[k])}</button>`).join("")}</div>
+      <div id="exp"></div>`;
+    document.querySelectorAll("#choices button").forEach(b => b.onclick = () => choose(+b.dataset.k));
+  }, 650);
 }
-function showChoices(){
+function choose(k){
   const p = P[S.pi];
-  const order = [0,1,2,3].sort(() => Math.random() - .5);
-  $("choices").innerHTML = order.map(k => `<button data-k="${k}">${esc(p.choices[k])}</button>`).join("");
-  document.querySelectorAll("#choices button").forEach(b => b.onclick = () => pickChoice(+b.dataset.k));
-  $("choiceArea").classList.remove("hidden");
-}
-function pickChoice(k){
-  const p = P[S.pi];
-  document.querySelectorAll("#choices button").forEach(b => { b.disabled = true; if (+b.dataset.k === 0) b.classList.add("right"); else if (+b.dataset.k === k) b.classList.add("wrong"); });
-  if (k === 0) setFb("ok", "⭕ 正解！ 骨組みが見えると、長い文もまっすぐ読めるね。");
-  else { S.mistakes++; S.log.push("意味の4択をまちがえた"); setFb("ng", "❌ 緑の選択肢が正解。骨組み（S・V・O）と、カタマリが何を説明しているかを見直そう。"); }
-  setSteps(4);
-  $("notes").innerHTML = p.notes.map(n => `<li>${n}</li>`).join("");
-  $("explainArea").classList.remove("hidden");
+  document.querySelectorAll("#choices button").forEach(b => { b.disabled = true; if (+b.dataset.k === 0) b.classList.add("ok"); else if (+b.dataset.k === k) b.classList.add("ng"); });
+  if (k === 0){ hit(30); fb("ok", "PERFECT!", "骨格が見えれば、長い文も一直線に読める。"); }
+  else { miss(); fb("ng", "MISS", "緑が正解。骨格（S・V・O）と、各カタマリが何を修飾しているかを確認しよう。"); }
+  steps(4);
+  const r = rankOf(S.miss);
+  if (!save.rank[S.pi] || RORD[r] > RORD[save.rank[S.pi]]) save.rank[S.pi] = r;
+  if (r !== "B") save.best = Math.max(save.best, p.words);
+  S.run.push({ pi:S.pi, r });
+  persist();
   const last = p.stage === 2;
-  $("nextBtn").textContent = last ? "結果を見る ▶" : `次は「${LV[p.stage+1]}」▶`;
-  finishProblem();
+  $("#exp").innerHTML = `<div class="sec">EXPLANATION</div><ul class="notes">${p.notes.map(n => `<li>${n}</li>`).join("")}</ul>
+    <button class="btn main" id="next" style="margin-top:14px">${last ? "RESULT ▶" : `NEXT ── ${LV[p.stage+1]} ▶`}</button>`;
+  $("#next").onclick = () => last ? result() : start(S.pi + 1);
 }
-function finishProblem(){
+
+/* ===================== 結果 ===================== */
+function result(){
   const p = P[S.pi];
-  const stars = S.mistakes === 0 ? 3 : S.mistakes <= 2 ? 2 : 1;
-  save.stars[S.pi] = Math.max(save.stars[S.pi] || 0, stars);
-  if (stars >= 2) save.best = Math.max(save.best || 0, p.words);
-  LS.set(KEY, JSON.stringify(save));
-  S.runResults.push({ pi:S.pi, stars, log:S.log.slice() });
+  save.pts = Math.max(save.pts, S.runPts); persist();
+  const maxW = Math.max(0, ...S.run.filter(x => x.r !== "B").map(x => P[x.pi].words));
+  const allTop = S.run.length && S.run.every(x => x.r !== "B"), allS = S.run.length && S.run.every(x => x.r === "S");
+  const cmt = allS ? "Perfect! 修飾の量に惑わされず、骨格を一発で見抜けていますね。次のシリーズへ！"
+    : allTop ? "Good job! 長い文でも骨格はシンプル。この感覚を、本番の長文でもそのまま使いましょう。"
+    : "長さに押されたら、まず<b>修飾部の外の動詞</b>を探すところから。もう一度チャレンジ！";
+  app.innerHTML = `<div class="card pop" style="text-align:center">
+      <div class="sec" style="margin-top:0">SERIES 0${p.series+1} ── RESULT</div>
+      <div style="font-weight:900;color:var(--main);font-size:17px;margin-top:4px">${SERIES[p.series].name}</div>
+      <div class="score">${S.runPts}<small> pt</small></div>
+      ${maxW ? `<div class="maxlen">${maxW} words の英文を攻略！</div>` : ""}
+    </div>
+    <div class="card">${S.run.map(x => `<div class="rrow"><span><b style="letter-spacing:.1em;color:var(--main)">${LV[P[x.pi].stage]}</b>　${P[x.pi].words} words</span><span class="rk ${x.r}">${x.r}</span></div>`).join("")}</div>
+    ${bubble(cmt)}
+    <button class="btn main" id="again" style="margin-top:16px">もう一度</button>
+    ${p.series < SERIES.length - 1 ? `<button class="btn sub" id="nextS">次のシリーズへ ▶</button>` : ""}
+    <button class="btn sub" id="toHome">HOME</button>`;
+  $("#again").onclick = () => { S.run = []; S.runPts = 0; S.combo = 0; start(P.findIndex(q => q.series === p.series && q.stage === 0)); };
+  if ($("#nextS")) $("#nextS").onclick = () => { S.run = []; S.runPts = 0; S.combo = 0; start(P.findIndex(q => q.series === p.series + 1 && q.stage === 0)); };
+  $("#toHome").onclick = home;
+  $("#hm").classList.add("hide");
+  scrollTo(0,0); if (allTop) confetti(allS);
 }
-$("nextBtn").onclick = () => {
-  const p = P[S.pi];
-  if (p.stage < 2) startProblem(S.pi + 1); else showResult();
+function confetti(gold){
+  const c = $("#cf"), x = c.getContext("2d"); c.width = innerWidth; c.height = innerHeight;
+  const cols = gold ? ["#d4a017","#f5d061","#fff1b8","#b8860b"] : ["#ff6b57","#17939e","#1f9d55","#f5d061","#0e6f78"];
+  const Q = Array.from({ length:140 }, () => ({ x:Math.random()*c.width, y:-20 - Math.random()*c.height, v:2 + Math.random()*3, r:Math.random()*6.28, s:5 + Math.random()*6, c:cols[Math.floor(Math.random()*cols.length)] }));
+  let f = 0; (function loop(){ x.clearRect(0,0,c.width,c.height); Q.forEach(p => { p.y += p.v; p.r += .1; x.save(); x.translate(p.x + Math.sin(p.r)*8, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.s/2, -p.s/4, p.s, p.s/2); x.restore(); }); if (++f < 260) requestAnimationFrame(loop); else x.clearRect(0,0,c.width,c.height); })();
+}
+
+/* HOME（途中は2回タップで戻る） */
+let armed = false;
+$("#hm").onclick = () => {
+  if (S.phase !== "meaning" && !armed){ armed = true; $("#hm").textContent = "もう一度タップ"; setTimeout(() => { armed = false; $("#hm").textContent = "HOME"; }, 2500); return; }
+  armed = false; $("#hm").textContent = "HOME"; home();
 };
 
-/* ================= 結果 ================= */
-function showResult(){
-  $("play").classList.add("hidden"); $("result").classList.remove("hidden");
-  const p = P[S.pi]; const s = SERIES[p.series];
-  $("resTitle").textContent = `${s.name}　結果`;
-  $("resRows").innerHTML = S.runResults.map(r => `<div class="res-row"><span>${LV[P[r.pi].stage]}（${P[r.pi].words}語）</span><span class="stars">${starStr(r.stars)}</span></div>`).join("");
-  const maxW = Math.max(...S.runResults.filter(r => r.stars >= 2).map(r => P[r.pi].words), 0);
-  $("resMsg").textContent = maxW ? `📏 ${maxW}語の文が読めた！` : "もう一度チャレンジしてみよう！";
-  const name = LS.get("eibunTatamiName") || "（なまえ未入力）";
-  const d = new Date(); const ds = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
-  let txt = `【英文たたみ ①役割】\n名前：${name}\n日付：${ds}\n${s.name}\n`;
-  S.runResults.forEach(r => { txt += `・${LV[P[r.pi].stage]}（${P[r.pi].words}語）${starStr(r.stars)}\n`; r.log.forEach(l => txt += `　└ ${l}\n`); });
-  $("copyText").value = txt;
-  window.scrollTo(0,0);
-}
-$("copyBtn").onclick = async () => {
-  const t = $("copyText").value;
-  try { await navigator.clipboard.writeText(t); } catch(e){ $("copyText").select(); document.execCommand("copy"); }
-  $("copyBtn").textContent = "✅ コピーしました";
-  setTimeout(() => $("copyBtn").textContent = "📋 コピーする", 2000);
-};
-$("againBtn").onclick = () => { const s = P[S.pi].series; S.runResults = []; startProblem(P.findIndex(p => p.series === s && p.stage === 0)); };
-$("homeBtn2").onclick = showHome;
-let homeArmed = false;
-$("homeBtn").onclick = () => {
-  const mid = !$("play").classList.contains("hidden") && S.phase !== "meaning";
-  if (mid && !homeArmed){
-    homeArmed = true; $("homeBtn").textContent = "もう一度タップでホーム";
-    setTimeout(() => { homeArmed = false; $("homeBtn").textContent = "🏠 ホーム"; }, 3000);
-    return;
-  }
-  homeArmed = false; $("homeBtn").textContent = "🏠 ホーム"; showHome();
-};
-
-window.__T = { P, S, onTok, pickType, pickChoice };
-showHome();
+window.__T = { P, S, onTok, pickType, choose, fold };
+home();
 </script>
 </body>
 </html>
