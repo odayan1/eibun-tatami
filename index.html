@@ -108,6 +108,15 @@ h2{font-size:16px;margin:0 0 8px;color:var(--main);letter-spacing:.02em}
 .br{font-weight:900;font-size:22px;padding:0 1px}
 .br.n{color:var(--cn)}.br.a{color:var(--ca)}.br.d{color:var(--cd)}
 .seg.fading{opacity:0;filter:blur(3px)}
+.tok.hnT{box-shadow:inset 0 -3px 0 var(--ca);font-weight:800}
+.tok.hnT:after{content:"名";position:absolute;left:50%;transform:translateX(-50%);top:-13px;font-size:10px;font-weight:900;color:#fff;background:var(--ca);border-radius:4px;padding:0 4px;line-height:1.35}
+.ghost{display:inline;opacity:.55;color:var(--cd);border:1.5px dashed var(--cd);border-radius:7px;padding:1px 6px;font-size:.82em;font-weight:700;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.ghost .add,.part .add{color:var(--acc);font-weight:900}
+.part .hn{box-shadow:inset 0 -3px 0 var(--ca);padding:0 2px}
+.part .tie{font-size:12px;font-weight:800;color:var(--ca);margin-top:2px}
+.part .sup{font-size:14px;margin-top:5px;padding:5px 8px;border:1.5px dashed var(--cd);border-radius:8px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+.part .sup small{display:block;font-size:11px;color:#6b7a86;font-weight:700}
+.hnG{box-shadow:inset 0 -3px 0 var(--ca);font-weight:800}
 .chipA{display:inline-block;background:var(--cn);color:#fff;border-radius:8px;padding:0 12px;font-weight:900;animation:pop .35s}
 .typebtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .typebtns button{border-radius:12px;padding:10px 4px;font-size:15px;font-weight:900;cursor:pointer;background:#fff;font-family:inherit}
@@ -236,17 +245,17 @@ const P = [
    skel:[["He","S"],["loved","V"],["old temples","O"]],
    notes:["骨格：<b>S ＋ V ＋ O</b>。old は temples を修飾する1語の形容詞。","次の BASIC では、文の頭に、文全体を修飾する<b>副詞のカタマリ</b>が付く。"] },
  { series:2, stage:1, text:"Growing up in Kyoto , he loved old temples .", verb:6,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"}],
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）",add:"As he",rest:"grew up in Kyoto"}],
    skel:[["He","S"],["loved","V"],["old temples","O"]],
    choices:["京都で育ったので、彼は古い寺が大好きだった。","京都が大きくなるにつれ、彼は古い寺を愛した。","彼は京都で古い寺を育てるのが大好きだった。","京都で育った古い寺を、彼はとても愛していた。"],
-   notes:["<Growing up in Kyoto> は文全体を修飾する<b>副詞のカタマリ</b>（分詞構文）。","意味上の主語は、文の主語 he と一致する（育ったのは彼）。","「〜する中で／〜なので」と読む。"] },
+   notes:["<Growing up in Kyoto> は文全体を修飾する<b>副詞のカタマリ</b>（分詞構文）。","意味上の主語は、文の主語 he と一致する（育ったのは彼）。","分詞構文は<b>接続詞と主語が省略された形</b>。補うと &lt;<b>As he</b> grew up in Kyoto&gt;。FOLD 後も、補った形で薄く残しておく。","「〜する中で／〜なので」と読む。"] },
  { series:2, stage:2, text:"Growing up in Kyoto , he loved old temples built hundreds of years ago .", verb:6,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"},{s:9,e:13,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"}],
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）",add:"As he",rest:"grew up in Kyoto"},{s:9,e:13,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"}],
    skel:[["He","S"],["loved","V"],["old temples","O"]],
    choices:["京都で育った彼は、数百年前に建てられた古い寺が大好きだった。","京都で育った彼は、数百年前に古い寺を建てるのが大好きだった。","京都で育った彼は古い寺が好きで、数百年前にその寺を建てた。","数百年前に京都で育った彼は、古い寺をとても大切にしていた。"],
    notes:["built は過去形ではなく<b>過去分詞</b>。(built hundreds of years ago) は temples を後ろから修飾する<b>形容詞のカタマリ</b> →「数百年前に建てられた寺」。","<b>名詞＋過去分詞</b>は、まず「〜された名詞」と読む。built を V と取ると「寺が建てた」という破綻した文になる。"] },
  { series:2, stage:3, text:"Growing up in Kyoto , the boy who later became a famous architect loved old temples built hundreds of years ago because each one had its own story .", verb:13,
-   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）"},{s:7,e:12,t:"a",ja:"後に有名な建築家となった",why:"直前の名詞 boy を修飾"},{s:16,e:20,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"},{s:21,e:27,t:"d",ja:"一つ一つに固有の物語があったので",why:"loved の理由を表す"}],
+   chunks:[{s:0,e:3,t:"d",ja:"京都で育つ中で（育ったので）",why:"文全体を修飾（分詞構文）",add:"As the boy",rest:"grew up in Kyoto"},{s:7,e:12,t:"a",ja:"後に有名な建築家となった",why:"直前の名詞 boy を修飾"},{s:16,e:20,t:"a",ja:"数百年前に建てられた",why:"直前の名詞 temples を修飾"},{s:21,e:27,t:"d",ja:"一つ一つに固有の物語があったので",why:"loved の理由を表す"}],
    skel:[["The boy","S"],["loved","V"],["old temples","O"]],
    choices:["京都で育ち、後に有名な建築家となった少年は、一つ一つに物語があるので、数百年前に建てられた古い寺を愛した。","京都で育った少年は、有名な建築家が数百年前に建てた古い寺に、一つ一つ物語があると知って、それを愛した。","京都で育った少年は、数百年前に建てられた古い寺に物語があったので、のちに京都で有名な建築家になった。","京都で育ち、後に有名な建築家となった男性は、数百年前に建てられた古い寺の物語を、幼いその少年に話した。"],
    notes:["(who later became a famous architect) は boy を修飾する<b>形容詞のカタマリ</b>（関係代名詞）。<b>主語 the boy と動詞 loved の間に割り込む</b>構造に注意。","動詞の候補は became / loved / built / had の4つ。カタマリの外にあるのは loved のみ。","<because each one had its own story> は理由を表す<b>副詞のカタマリ</b>。","27語が、たたむと CORE と同じ骨格に。ここまで読めれば、英検2級の長文の1文は怖くない。"] }
@@ -316,7 +325,7 @@ const GUIDE = [
     <h2 style="font-size:19px;margin-top:4px">カタマリにも品詞がある</h2>
     <p class="muted" style="margin:0">このアプリでは、カタマリを3つの記号で括る。</p>
     <div class="chunkrow n"><div class="hd cn">[ ]　名詞のカタマリ</div><div class="ds">名詞と同じ位置（S・O・C）に入る。</div><div class="eg en-s">Many tourists visit <span class="bn"><span class="cn">[</span>what is now a museum<span class="cn">]</span></span>.</div></div>
-    <div class="chunkrow a"><div class="hd ca">( )　形容詞のカタマリ</div><div class="ds">直前の<b>名詞</b>を、後ろから説明する。</div><div class="eg en-s">the money <span class="ba"><span class="ca">(</span>she saved<span class="ca">)</span></span> ／ temples <span class="ba"><span class="ca">(</span>built long ago<span class="ca">)</span></span></div></div>
+    <div class="chunkrow a"><div class="hd ca">( )　形容詞のカタマリ</div><div class="ds">直前の<b>名詞</b>を、後ろから説明する。<b>説明される名詞（下線）とセットで</b>見る。</div><div class="eg en-s">the <span class="hnG">money</span> <span class="ba"><span class="ca">(</span>she saved<span class="ca">)</span></span> ／ <span class="hnG">temples</span> <span class="ba"><span class="ca">(</span>built long ago<span class="ca">)</span></span></div></div>
     <div class="chunkrow d"><div class="hd cd">&lt; &gt;　副詞のカタマリ</div><div class="ds">動詞や文全体を説明する（時・理由・目的など）。</div><div class="eg en-s"><span class="bd"><span class="cd">&lt;</span>Every summer<span class="cd">&gt;</span></span>, … ／ … <span class="bd"><span class="cd">&lt;</span>because it had a story<span class="cd">&gt;</span></span></div></div>
     <p class="muted" style="margin:10px 0 0">※文法用語では「句」「節」と呼び分けるが、このアプリではまとめて「カタマリ」と呼ぶ。</p>
   </div>`,
@@ -424,6 +433,7 @@ function tok(p,k){
   const t = p.tokens[k]; let c = "tok";
   if (isPunct(t)) c += " punct";
   if (k === p.verb && S.phase !== "verb") c += " isV";
+  if (p.chunks.some((ch,ci) => S.found.has(ci) && headOf(p,ch) === k)) c += " hnT";
   if (S.selS !== null){ const a = Math.min(S.selS, S.selE ?? S.selS), b = Math.max(S.selS, S.selE ?? S.selS); if (k >= a && k <= b) c += " sel"; }
   return `<span class="${c}" data-i="${k}">${esc(t)}</span>`;
 }
@@ -496,9 +506,16 @@ function pickType(t){
   fb("ng", "MISS", over ? "惜しい。カタマリの<b>始点</b>か<b>終点</b>がずれている。" : "そこはカタマリではない（骨格の一部の可能性）。");
   S.selS = null; S.selE = null; $("#typeBtns").classList.add("hide"); render(); inst();
 }
+const headOf = (p,c) => c.t === "a" ? (c.head ?? c.s - 1) : -1;
 function partHtml(p,c){
+  const h = headOf(p,c);
+  const en = h >= 0
+    ? `<span class="hn">${esc(p.tokens[h])}</span> <b>${esc(symO[c.t])}</b> ${esc(chunkText(p,c))} <b>${esc(symC[c.t])}</b>`
+    : `<b>${esc(symO[c.t])}</b> ${esc(chunkText(p,c))} <b>${esc(symC[c.t])}</b>`;
+  const tie = h >= 0 ? `<div class="tie">▲ 名詞 <b>${esc(p.tokens[h])}</b> を後ろから説明</div>` : "";
+  const sup = c.add ? `<div class="sup">補うと：<b>${esc(symO[c.t])}</b> <span class="add">${esc(c.add)}</span> ${esc(c.rest)} <b>${esc(symC[c.t])}</b><small>接続詞＋主語が省略されている</small></div>` : "";
   return `<div class="part ${c.t}"><span class="lab">${esc(symO[c.t] + " " + symC[c.t])}　${tName[c.t]}のカタマリ</span>
-    <div class="en"><b>${esc(symO[c.t])}</b> ${esc(chunkText(p,c))} <b>${esc(symC[c.t])}</b></div>
+    <div class="en">${en}</div>${tie}${sup}
     <div class="jp">「${esc(c.ja)}」</div><div class="rl">役割：${esc(c.why)}</div></div>`;
 }
 function listFound(){
@@ -529,6 +546,7 @@ function fold(){
     const c = p.chunks[+seg.dataset.ci]; seg.classList.add("fading");
     setTimeout(() => {
       if (c.t === "n"){ seg.className = "seg"; seg.innerHTML = `<span class="chipA">[ A ]</span>`; }
+      else if (c.add){ seg.className = "seg"; seg.innerHTML = `<span class="ghost">&lt; <span class="add">${esc(c.add)}</span> ${esc(c.rest)} &gt;</span>`; }
       else { seg.style.display = "none"; [seg.previousElementSibling, seg.nextElementSibling].forEach(el => { if (el && el.classList.contains("punct") && el.textContent === ",") el.style.display = "none"; }); }
     }, 560);
   });
