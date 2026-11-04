@@ -194,6 +194,28 @@ footer{font-size:11px;color:#8a949e;line-height:1.6;margin-top:24px;text-align:c
 <div class="toast" id="toast"></div>
 <canvas id="cf"></canvas>
 <script>
+/* ========== 記録（先生のスプレッドシートへ送る・2026-11-04） ==========
+   URL_ が空なら何もしない。公開ページ（*.github.io）でだけ送る（プレビュー・テストでは送らない）。
+   生徒IDは URL の ?id=xxxx から（名前は送らない）。IDなし＝お試し（匿名）。
+   1問答えるごとに「途中」の記録を用意 → 画面を閉じた・ホームにもどったら1件送る／結果画面で「完了」を1件送る。
+   1問も答えていなければ送らない（開いただけのボットは記録に入らない）。送れなかったら端末に貯めて次に送る。 */
+const LOG=(()=>{
+  const URL_='https://script.google.com/macros/s/AKfycbzl9ygX2TGUSIvZ-klW7BGiDgIkKHv6dnKAumzikZ0H2uE4anDp7DCqE3PLOJLp9g/exec';
+  const LIVE=!!URL_&&/\.github\.io$/.test(location.hostname);
+  const sid=(new URLSearchParams(location.search).get('id')||'').toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,20);
+  const dev=(()=>{try{let d=localStorage.getItem('__dev');if(!d){d=Math.random().toString(36).slice(2,12);localStorage.setItem('__dev',d);}return d;}catch(e){return 'nostore';}})();
+  let pending=null;
+  const queue=rec=>{try{const q=JSON.parse(localStorage.getItem('__q')||'[]');q.push(rec);localStorage.setItem('__q',JSON.stringify(q.slice(-50)));}catch(e){}};
+  const post=rec=>{try{fetch(URL_,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(rec)}).catch(()=>queue(rec));}catch(e){queue(rec);}};
+  function done(r){if(!LIVE)return;pending=null;post(Object.assign({v:1,sid,dev,st:'done'},r));}
+  function step(r){if(!LIVE)return;if(r&&r.n>0)pending=Object.assign({v:1,sid,dev,st:'part'},r);}
+  function leave(){if(!LIVE||!pending)return;const body=JSON.stringify(pending);pending=null;try{if(!(navigator.sendBeacon&&navigator.sendBeacon(URL_,body)))queue(JSON.parse(body));}catch(e){}}
+  addEventListener('pagehide',leave);
+  addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')leave();});
+  if(LIVE){try{const q=JSON.parse(localStorage.getItem('__q')||'[]');if(q.length){localStorage.setItem('__q','[]');q.forEach(post);}}catch(e){}}
+  return {done,step,leave,sid,live:LIVE};
+})();
+
 /* 保存（localStorage）が使えない環境（プレビュー画面など）でも止まらないよう、使えなければメモリに保存 */
 const store = (() => { try { const k = "__t"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return localStorage; } catch (e) { const m = {}; return { getItem: k => (k in m ? m[k] : null), setItem: (k, v) => { m[k] = String(v); } }; } })();
 const ELLIE = "data:image/jpeg;base64,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";
@@ -367,7 +389,7 @@ function guide(k){
 
 /* ===================== ホーム（本編） ===================== */
 function home(){
-  S.inRun = false; setPts(); $("#hm").classList.add("hide");
+  LOG.leave(); S.inRun = false; setPts(); $("#hm").classList.add("hide");
   let h = `<div class="hero">
     <div class="en">READ LONG. FOLD SMART.</div>
     <div class="jp">長文は、<span>たためば</span>読める。</div>
@@ -385,6 +407,7 @@ function home(){
       h += `<button class="lv" data-pi="${pi}"><b>${LV[p.stage]}</b><small>${p.words} words</small>${r ? `<span class="rk ${r}">${r}</span>` : `<span class="rk">─</span>`}</button>`; });
     h += `</div></div>`;
   });
+  if (LOG.live && LOG.sid) h += `<p class="muted" style="text-align:center;margin:10px 0 0;color:#1f9d55;font-weight:800">📝 記録ON（ID：${LOG.sid}）　先生に結果がとどきます</p>`;
   h += `<footer>※エリー先生はAIで作ったキャラクターです。内容は現役の英検指導講師が監修しています。<br>例文はすべてオリジナルです。<br>英検®は、公益財団法人 日本英語検定協会の登録商標です。<br>このアプリは、同協会の承認や推奨、その他の検討を受けたものではありません。<br>© Q-UP英語塾</footer>`;
   app.innerHTML = h;
   $("#toGuide").onclick = () => guide(0);
@@ -394,6 +417,7 @@ function home(){
 
 /* ===================== プレイ ===================== */
 function start(pi){
+  if (!S.run.length) S.t0 = Date.now();
   Object.assign(S, { pi, phase:"verb", miss:0, found:new Set(), selS:null, selE:null, hint:0 });
   S.order = P[pi].chunks.map((c,ci) => ci).sort((a,b) => RANK[P[pi].chunks[a].t] - RANK[P[pi].chunks[b].t] || P[pi].chunks[a].s - P[pi].chunks[b].s);
   const p = P[pi], core = p.chunks.length === 0; setPts(); $("#hm").classList.remove("hide");
@@ -616,12 +640,13 @@ function choose(k){
   $("#exp").innerHTML = `<div class="sec">EXPLANATION</div><ul class="notes">${p.notes.map(n => `<li>${n}</li>`).join("")}</ul>`;
   finishOne();
 }
+function tatamiRec(){ const p0 = P[S.run[0].pi]; return { app:"eibun-tatami", sec:"S0"+(p0.series+1)+" "+SERIES[p0.series].name, ok:S.run.filter(x => x.r === "S").length, n:S.run.length, of:4 - p0.stage, wrong:S.run.filter(x => x.r !== "S").map(x => LV[P[x.pi].stage]+"="+x.r), ms:Date.now() - (S.t0 || Date.now()) }; }
 function finishOne(){
   const p = P[S.pi];
   const r = rankOf(S.miss);
   if (!save.rank[S.pi] || RORD[r] > RORD[save.rank[S.pi]]) save.rank[S.pi] = r;
   if (r !== "B") save.best = Math.max(save.best, p.words);
-  S.run.push({ pi:S.pi, r }); persist();
+  S.run.push({ pi:S.pi, r }); persist(); LOG.step(tatamiRec());
   const last = p.stage === 3;
   const b = document.createElement("button"); b.className = "btn main"; b.id = "next";
   b.textContent = last ? "RESULT ▶" : `NEXT ── ${LV[p.stage+1]} ▶`;
@@ -631,7 +656,7 @@ function finishOne(){
 
 /* ===================== 結果 ===================== */
 function result(){
-  const p = P[S.pi];
+  const p = P[S.pi]; LOG.done(tatamiRec());
   save.pts = Math.max(save.pts, S.runPts); persist();
   const maxW = Math.max(0, ...S.run.filter(x => x.r !== "B").map(x => P[x.pi].words));
   const allTop = S.run.length && S.run.every(x => x.r !== "B"), allS = S.run.length && S.run.every(x => x.r === "S");
